@@ -11,14 +11,13 @@
   import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
-    // TODO: REPLACE WITH YOUR FIREBASE PROJECT CONFIG
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyCYdL8qJoE4LzH3AyDN5mIh4s9N7S7qCtg",
+        authDomain: "gtci-brunei-dashboard.firebaseapp.com",
+        databaseURL: "https://gtci-brunei-dashboard-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "gtci-brunei-dashboard",
+        storageBucket: "gtci-brunei-dashboard.firebasestorage.app",
+        messagingSenderId: "721434693610",
+        appId: "1:721434693610:web:31f0eca51bcfbbeb0bec93"
   };
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
