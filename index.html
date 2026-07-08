@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
+<style>
 :root{
   --bg-primary:#f8fafc; --bg-secondary:#ffffff; --bg-tertiary:#f1f5f9;
   --border-color:#e2e8f0; --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#94a3b8;
@@ -330,7 +330,7 @@ function renderShell(){
 
     <div class="toolbar">
       <div class="search-row">
-        <input class="search-box" id="search-input" placeholder="Search any indicator — name, code, ministry, source, comments, analysis, fix notes…" oninput="onSearch(this.value)">             <div class="ai-search-row" style="display:flex;gap:8px;margin-top:8px;">               <input class="search-box" id="ai-search-input" placeholder="Ask AI — e.g. Which indicators does Brunei lag behind Singapore?" style="flex:1;" onkeydown="if(event.key==='Enter')aiSearch()">               <button class="btn btn-primary" id="ai-search-btn" onclick="aiSearch()">&#x2728; Ask AI</button>             </div>             <div id="ai-search-result" style="display:none;margin-top:8px;padding:12px 14px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;font-size:13px;line-height:1.6;"></div>
+        <input class="search-box" id="search-input" placeholder="Search any indicator — name, code, ministry, source, comments, analysis, fix notes…" oninput="onSearch(this.value)">
         <button class="btn adv-toggle" onclick="toggleAdv()">Advanced Filters <span id="adv-chevron">▼</span></button>
       </div>
 
@@ -852,15 +852,7 @@ function exportCSV(){
 /* ============================================================
    INIT
    ============================================================ */
-async function aiSearch() { var q = document.getElementById('ai-search-input').value.trim(); if (!q) return; var btn = document.getElementById('ai-search-btn'); var out = document.getElementById('ai-search-result'); btn.disabled = true; btn.textContent = 'Thinking...'; out.style.display = 'block'; out.innerHTML = '<em>Analysing GTCI data...</em>'; try { var rows = allData; var lines = []; for (var i = 0; i < rows.length; i++) { var r = rows[i]; lines.push(r.code + '|' + r.name + '|' + (r.pillar||'') + '|BN:' + (r.bn_score!=null?r.bn_score:'N/A') + '|SG:' + (r.sg_score!=null?r.sg_score:'N/A') + '|Gap:' + (r.gap!=null?r.gap:'N/A') + '|Rank:' + (r.bn_rank!=null?r.bn_rank:'N/A')); } var summary = lines.join('; '); var prompt = 'You are an analyst for Brunei GTCI dashboard. Indicator data (code|name|pillar|BN|SG|Gap|Rank): ' + summary + '. Question: ' + q + '. Answer concisely.'; var response = await puter.ai.chat(prompt); out.innerHTML = String(response).replace(/
-/g, '<br>'); } catch(e) { out.innerHTML = '<span style="color:red">AI error: ' + e.message + '</span>'; } btn.disabled = false; btn.innerHTML = '&#x2728; Ask AI'; } {     const q = document.getElementById('ai-search-input').value.trim();     if (!q) return;     const btn = document.getElementById('ai-search-btn');     const out = document.getElementById('ai-search-result');     btn.disabled = true;     btn.textContent = 'Thinking...';     out.style.display = 'block';     out.innerHTML = '<em>Analysing GTCI data...</em>';     try {       const rows = allData;       const summary = rows.map(r => `${r.code}|${r.name}|${r.pillar||''}|BN:${r.bn_score??'N/A'}|SG:${r.sg_score??'N/A'}|Gap:${r.gap??'N/A'}|Rank:${r.bn_rank??'N/A'}`).join('
-');       const prompt = `You are an analyst for Brunei's GTCI dashboard. The following is indicator data (code|name|pillar|BN score|SG score|Gap|BN rank):
-${summary}
-
-User question: ${q}
-
-Answer concisely based on the data above.`;       const response = await puter.ai.chat(prompt);       out.innerHTML = response.toString().replace(/
-/g,'<br>');     } catch(e) {       out.innerHTML = '<span style="color:var(--error)">AI error: ' + e.message + '</span>';     }     btn.disabled = false;     btn.innerHTML = '&#x2728; Ask AI';   }   window.addEventListener('DOMContentLoaded', loadData);
+window.addEventListener('DOMContentLoaded', loadData);
 </script>
-<script src="https://js.puter.com/v2/"></script></body>
+</body>
 </html>
