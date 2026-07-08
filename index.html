@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://js.puter.com/v2/" defer></script>     <style>
+    <style>
 :root{
   --bg-primary:#f8fafc; --bg-secondary:#ffffff; --bg-tertiary:#f1f5f9;
   --border-color:#e2e8f0; --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#94a3b8;
@@ -862,5 +862,5 @@ User question: ${q}
 Answer concisely based on the data above.`;       const response = await puter.ai.chat(prompt);       out.innerHTML = response.toString().replace(/
 /g,'<br>');     } catch(e) {       out.innerHTML = '<span style="color:var(--error)">AI error: ' + e.message + '</span>';     }     btn.disabled = false;     btn.innerHTML = '&#x2728; Ask AI';   }   window.addEventListener('DOMContentLoaded', loadData);
 </script>
-</body>
+<script src="https://js.puter.com/v2/"></script></body>
 </html>
