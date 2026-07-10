@@ -1,0 +1,2109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brunei Darussalam — GTCI 2025: All 77 Indicators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-primary:#f8fafc; --bg-secondary:#ffffff; --bg-tertiary:#f1f5f9;
+  --border-color:#e2e8f0; --text-primary:#0f172a; --text-secondary:#475569; --text-muted:#94a3b8;
+  --primary:#2563eb; --primary-hover:#1d4ed8; --primary-light:#eff6ff;
+  --success:#059669; --success-light:#ecfdf5; --warning:#d97706; --warning-light:#fffbeb;
+  --error:#dc2626; --error-light:#fef2f2; --orange:#ea580c; --orange-light:#fff7ed;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08); --shadow-md:0 4px 12px rgba(0,0,0,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;line-height:1.5;}
+.wrap{max-width:1440px;margin:0 auto;padding:20px 22px 60px;}
+
+/* ── Top bar ─────────────────────────────────────────── */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;}
+.brand h1{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;
+  background:linear-gradient(135deg,var(--primary),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.brand p{font-size:11.5px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.topbar-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn{font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:8px;border:1px solid var(--border-color);
+  background:var(--bg-secondary);color:var(--text-primary);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{background:var(--bg-tertiary);}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-ghost{background:transparent;}
+
+/* ── Hero ────────────────────────────────────────────── */
+.hero{background:linear-gradient(135deg,#0c4a6e 0%,#0369a1 50%,#0284c7 100%);border-radius:14px;padding:26px 30px;color:#fff;margin-bottom:20px;position:relative;overflow:hidden;}
+.hero::before{content:"";position:absolute;right:26px;top:50%;transform:translateY(-50%);font-size:78px;opacity:.13;}
+.hero h2{font-family:'Outfit',sans-serif;font-size:21px;font-weight:800;margin-bottom:6px;}
+.hero p{font-size:12.5px;opacity:.9;max-width:720px;line-height:1.65;}
+.hero .meta-line{font-size:11px;opacity:.75;margin-top:10px;}
+
+/* ── KPI row ─────────────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:12px;margin-bottom:20px;}
+.kpi{position:relative;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:box-shadow .15s,border-color .15s,transform .15s;}
+.kpi:hover{box-shadow:var(--shadow-md);border-color:#bfdbfe;transform:translateY(-2px);}
+.kpi:active{transform:translateY(0) scale(.97);}
+.kpi .kv{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;}
+.kpi .kl{font-size:9.5px;color:var(--text-secondary);margin-top:3px;text-transform:uppercase;letter-spacing:.4px;font-weight:600;}
+.kpi::after{content:"⤢ explore";position:absolute;top:6px;right:8px;font-size:8.5px;font-weight:700;letter-spacing:.3px;color:var(--text-muted);opacity:0;transition:opacity .15s;}
+.kpi:hover::after{opacity:.85;}
+
+/* ── Scorecard exploded modal ────────────────────────────*/
+.kpi-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(3px);z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .25s ease,visibility 0s linear .25s;}
+.kpi-modal-overlay.open{opacity:1;visibility:visible;transition:opacity .25s ease;}
+.kpi-modal{background:#fff;border-radius:16px;width:100%;max-width:880px;max-height:86vh;display:flex;flex-direction:column;
+  box-shadow:0 30px 70px rgba(0,0,0,.35);transform:scale(.3);opacity:0;transition:transform .38s cubic-bezier(.16,1,.3,1),opacity .25s ease;}
+.kpi-modal-overlay.open .kpi-modal{transform:scale(1);opacity:1;}
+.kpi-modal-head{padding:22px 26px 18px;border-bottom:1px solid var(--border-color);position:relative;flex-shrink:0;}
+.kpi-modal-head .kv-big{font-family:'Outfit',sans-serif;font-size:40px;font-weight:800;line-height:1;}
+.kpi-modal-head .kl-big{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-secondary);margin-top:5px;}
+.kpi-modal-head .kdesc{font-size:12.5px;color:var(--text-secondary);margin-top:10px;line-height:1.65;max-width:620px;}
+.kpi-modal-close{position:absolute;top:18px;right:20px;width:32px;height:32px;border-radius:50%;border:1px solid var(--border-color);
+  background:#f8fafc;color:var(--text-secondary);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.kpi-modal-close:hover{background:#fee2e2;border-color:#fca5a5;color:#dc2626;}
+.kpi-modal-breakdown{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.kpi-modal-breakdown span{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.kpi-modal-body{padding:6px 26px 20px;overflow-y:auto;flex:1;}
+.kpi-mini-row{display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid var(--border-color);cursor:pointer;transition:background .12s;border-radius:6px;}
+.kpi-mini-row:hover{background:var(--bg-tertiary);}
+.kpi-mini-row .kmr-name{flex:1;font-size:12.5px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.kpi-mini-row .kmr-stat{font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+.kpi-mini-row .kmr-arrow{font-size:11px;color:var(--text-muted);flex-shrink:0;}
+.kpi-mini-row .kmr-pillar{flex-shrink:0;font-size:9.5px;padding:2px 8px;}
+.kpi-modal-foot{padding:14px 26px;border-top:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;background:var(--bg-tertiary);border-radius:0 0 16px 16px;}
+.kpi-modal-foot .kmf-hint{font-size:11px;color:var(--text-muted);}
+.kpi-modal-empty{text-align:center;color:var(--text-muted);font-size:12.5px;padding:30px 0;}
+@keyframes flashHighlight{0%{background:#fef08a;}100%{background:transparent;}}
+tr.flash-highlight td{animation:flashHighlight 1.8s ease;}
+@media (max-width:640px){ .kpi-modal-head .kv-big{font-size:32px;} .kpi-modal{max-height:92vh;} .kpi-modal-body{padding:6px 18px 18px;} .kpi-modal-head{padding:18px 18px 14px;} .kpi-modal-foot{padding:12px 18px;} }
+
+/* ── Methodology sidebar (GTCI 2023→2025 changes) ────────*/
+.methodology-btn{margin-top:14px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:12px;font-weight:600;padding:8px 14px;border-radius:8px;cursor:pointer;transition:background .15s;}
+.methodology-btn:hover{background:rgba(255,255,255,.24);}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(2px);z-index:1100;
+  opacity:0;visibility:hidden;transition:opacity .25s ease,visibility 0s linear .25s;}
+.sidebar-overlay.open{opacity:1;visibility:visible;transition:opacity .25s ease;}
+.sidebar-panel{position:absolute;top:0;right:0;height:100%;width:min(560px,92vw);background:#fff;box-shadow:-20px 0 50px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);}
+.sidebar-overlay.open .sidebar-panel{transform:translateX(0);}
+.sb-head{padding:20px 22px 16px;border-bottom:1px solid var(--border-color);position:relative;flex-shrink:0;display:flex;gap:14px;align-items:flex-start;}
+.sb-head h3{font-size:15px;font-weight:800;margin-bottom:6px;}
+.sb-head p{font-size:11.5px;color:var(--text-secondary);line-height:1.6;}
+.sb-head .kpi-modal-close{position:static;flex-shrink:0;}
+.sb-body{flex:1;overflow-y:auto;padding:14px 22px 24px;}
+.sb-table{width:100%;border-collapse:collapse;font-size:11.5px;}
+.sb-table th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);padding:6px 8px;border-bottom:2px solid var(--border-color);position:sticky;top:0;background:#fff;}
+.sb-table td{padding:7px 8px;border-bottom:1px solid var(--border-color);vertical-align:top;}
+.sb-table tr.sb-new{background:#fffbeb;}
+.sb-code{font-family:'Outfit',sans-serif;font-weight:700;font-size:11px;white-space:nowrap;}
+.sb-adj{font-size:10.5px;color:var(--text-secondary);}
+@media (max-width:640px){ .sidebar-panel{width:100vw;} }
+
+/* ── Toolbar / search / filters ─────────────────────────*/
+.toolbar{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;padding:18px 20px;margin-bottom:18px;}
+.search-row{display:flex;gap:10px;margin-bottom:14px;}
+.search-box{flex:1;padding:10px 14px;border-radius:9px;border:1px solid var(--border-color);background:var(--bg-tertiary);color:var(--text-primary);font-size:13.5px;outline:none;}
+.search-box:focus{border-color:var(--primary);background:#fff;}
+.adv-toggle{white-space:nowrap;}
+
+.filter-panel{border-top:1px dashed var(--border-color);padding-top:14px;margin-top:4px;display:none;}
+.filter-panel.open{display:block;}
+.f-row{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px;}
+.f-row:last-child{margin-bottom:0;}
+.f-label{font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;min-width:96px;padding-top:6px;flex-shrink:0;}
+.f-opts{display:flex;gap:7px;flex-wrap:wrap;flex:1;}
+.f-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid var(--border-color);
+  background:#fff;color:var(--text-primary);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.f-btn.active{color:#fff;border-color:var(--bc,#0369a1);background:var(--bc,#0369a1);}
+.f-btn:not(.active):hover{border-color:var(--bc,#0369a1);color:var(--bc,#0369a1);}
+
+.results-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;color:var(--text-muted);}
+.results-bar .rb-actions{display:flex;gap:8px;}
+.rb-count b{color:var(--text-primary);}
+
+/* ── Table ───────────────────────────────────────────── */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border-color);background:var(--bg-secondary);}
+table.ind-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+table.ind-table thead tr{background:var(--bg-tertiary);}
+table.ind-table th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--text-secondary);border-bottom:2px solid var(--border-color);white-space:nowrap;cursor:pointer;user-select:none;}
+table.ind-table th:hover{color:var(--primary);}
+table.ind-table th .si{font-size:9px;margin-left:3px;opacity:.6;}
+table.ind-table td{padding:10px 12px;border-bottom:1px solid var(--border-color);vertical-align:top;}
+table.ind-table tbody tr.data-row:hover{background:var(--bg-tertiary);cursor:pointer;}
+tr.detail-row{background:var(--bg-tertiary);}
+.row-code{font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;background:#fff;border:1px solid var(--border-color);padding:2px 7px;border-radius:5px;white-space:nowrap;}
+.row-name{font-weight:600;line-height:1.35;max-width:230px;}
+.pillar-pill{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.min-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;}
+.score{font-family:'Outfit',sans-serif;font-weight:700;font-size:13.5px;}
+.rank{font-weight:700;}
+.gap-pos{color:#16a34a;font-weight:700;}
+.gap-neg{color:#dc2626;font-weight:700;}
+.gap-na{color:var(--text-muted);}
+.band-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.flag-badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;margin-right:3px;display:inline-block;margin-bottom:2px;}
+.flag-qw{background:#dcfce7;color:#15803d;}
+.flag-cc{background:#ede9fe;color:#6d28d9;}
+.new-tag{font-size:9px;font-weight:800;letter-spacing:.03em;padding:2px 6px;border-radius:20px;margin-left:5px;background:#fef3c7;color:#b45309;border:1px solid #fcd34d;white-space:nowrap;vertical-align:middle;display:inline-block;}
+tr.subpillar-row td{background:#eef2f7;border-top:2px solid var(--border-color);border-bottom:1px solid var(--border-color);padding-top:9px;padding-bottom:9px;}
+tr.subpillar-row .sp-code{background:#0f172a;color:#fff;border-color:#0f172a;}
+tr.subpillar-row .sp-name{font-weight:800;font-size:12.5px;letter-spacing:.2px;color:var(--text-primary);}
+.expand-ico{font-size:11px;color:var(--text-muted);}
+.screenshot-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:5px;margin-right:4px;
+  opacity:.55;transition:opacity .15s,background .15s;line-height:1;}
+.screenshot-btn:hover{opacity:1;background:var(--bg-tertiary,#f1f5f9);}
+.screenshot-btn[disabled]{opacity:.3;cursor:wait;}
+
+/* ── Detail panel ────────────────────────────────────── */
+.detail-panel{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.d-sec{}
+.d-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.d-txt{font-size:12.5px;color:var(--text-primary);line-height:1.65;}
+.d-box{grid-column:1/-1;background:#fff;border:1px solid var(--border-color);border-left:3px solid var(--primary);border-radius:8px;padding:13px 15px;margin-top:2px;}
+.d-box.warn{border-left-color:#dc2626;}
+.d-box.sector{border-left-color:#7c3aed;}
+.d-box.moe{border-left-color:#0891b2;}
+.sector-chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px;color:#fff;margin-right:6px;margin-bottom:6px;}
+.copy-btn{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;
+  border:1px solid var(--border-color);background:#f8fafc;color:#64748b;cursor:pointer;transition:all .15s;vertical-align:middle;}
+.copy-btn:hover{background:#e0f2fe;border-color:#3b82f6;color:#0369a1;}
+.copy-btn.copied{background:#d1fae5;border-color:#16a34a;color:#065f46;}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px;}
+.loading{text-align:center;padding:60px 20px;color:var(--text-muted);font-size:13.5px;}
+.spinner{width:32px;height:32px;border:3px solid var(--border-color);border-top-color:var(--primary);border-radius:50%;
+  animation:spin .8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+footer{text-align:center;font-size:11px;color:var(--text-muted);margin-top:26px;padding-top:16px;border-top:1px solid var(--border-color);}
+
+@media (max-width:900px){
+  .detail-panel{grid-template-columns:1fr;}
+  .f-label{min-width:auto;width:100%;}
+  .wrap{padding:14px;}
+
+  /* ── Automatic phone mode: the dense multi-column table becomes a stacked,
+     labeled card list. This is purely CSS-driven so it applies the instant the
+     page paints on a phone-sized screen — no JS device detection or "mode
+     switch" delay, and it reacts live if the window is resized/rotated. ── */
+  .table-wrap{overflow-x:visible;border:none;background:none;}
+  .ind-table{width:100%;border-collapse:separate;border-spacing:0;}
+  .ind-table thead{display:none;}
+  .ind-table tbody{display:block;}
+
+  tr.data-row{display:block;position:relative;background:var(--bg-secondary);
+    border:1px solid var(--border-color);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+  tr.data-row td{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:5px 0;border:none;text-align:right;}
+  tr.data-row td::before{content:attr(data-label);font-size:10px;font-weight:700;text-transform:uppercase;
+    letter-spacing:.4px;color:var(--text-muted);flex-shrink:0;text-align:left;}
+  tr.data-row td[data-label="Code"]{padding-right:56px;display:block;text-align:left;} /* leave room for the floating action icons */
+  tr.data-row td[data-label="Code"]::before{content:'';}
+  tr.data-row td[data-label="Indicator"]{display:block;text-align:left;padding-top:2px;padding-bottom:10px;
+    border-bottom:1px solid var(--border-color);margin-bottom:6px;}
+  tr.data-row td[data-label="Indicator"]::before{content:'';}
+  tr.data-row td[data-label="Indicator"] .row-name{font-weight:600;text-align:left;max-width:none;}
+  tr.data-row td.row-actions-cell{position:absolute;top:12px;right:12px;padding:0;display:flex;}
+
+  tr.subpillar-row{display:block;background:none;border:none;padding:16px 4px 6px;margin:0;}
+  tr.subpillar-row td{display:inline;padding:0;border:none;}
+  tr.subpillar-row td::before{content:'';}
+
+  tr.detail-row{display:block;}
+  tr.detail-row td{display:block;padding:0;border:none;}
+}
+
+/* ── Edit mode ───────────────────────────────────────── */
+.btn-edit-active{background:var(--warning);border-color:var(--warning);color:#fff;}
+.btn-edit-active:hover{background:#b45309;}
+.btn-download-pending{background:var(--success);border-color:var(--success);color:#fff;animation:pulseGlow 1.6s ease-in-out infinite;}
+.btn-download-pending:hover{background:#047857;}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(5,150,105,.45);}50%{box-shadow:0 0 0 6px rgba(5,150,105,0);}}
+.edit-banner{display:none;align-items:center;gap:10px;background:#fffbeb;border:1px solid #fcd34d;color:#92400e;
+  font-size:12px;font-weight:600;padding:10px 16px;border-radius:10px;margin-bottom:16px;}
+.edit-banner.show{display:flex;}
+.edit-banner .eb-dot{width:8px;height:8px;border-radius:50%;background:#d97706;flex-shrink:0;animation:pulseGlow2 1.4s ease-in-out infinite;}
+@keyframes pulseGlow2{0%,100%{opacity:1;}50%{opacity:.35;}}
+body.edit-mode [data-editable="1"]{outline:1.5px dashed #d97706;outline-offset:2px;border-radius:4px;background:#fffbeb;cursor:text;transition:background .12s;}
+body.edit-mode [data-editable="1"]:hover{background:#fef3c7;}
+body.edit-mode [data-editable="1"]:focus{outline:2px solid #d97706;background:#fff;}
+body.edit-mode select.edit-select, body.edit-mode input.edit-input{
+  font:inherit;border:1.5px dashed #d97706;background:#fffbeb;border-radius:5px;padding:2px 5px;color:inherit;}
+.edit-json-toggle{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:6px;border:1px dashed #7c3aed;
+  background:#f5f3ff;color:#6d28d9;cursor:pointer;margin-top:10px;display:inline-block;}
+.edit-json-toggle:hover{background:#ede9fe;}
+.raw-json-box{display:none;margin-top:10px;grid-column:1/-1;}
+.raw-json-box.open{display:block;}
+.raw-json-box textarea{width:100%;min-height:220px;font-family:'SFMono-Regular',Consolas,Menlo,monospace;font-size:11.5px;
+  line-height:1.55;padding:12px;border-radius:8px;border:1px solid var(--border-color);background:#0f172a;color:#e2e8f0;resize:vertical;}
+.raw-json-actions{display:flex;gap:8px;margin-top:8px;}
+.raw-json-msg{font-size:11px;font-weight:600;margin-top:6px;}
+.raw-json-msg.err{color:#dc2626;}
+.raw-json-msg.ok{color:#059669;}
+
+/* Full-master JSON modal */
+.master-json-overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(3px);z-index:1100;
+  display:none;align-items:center;justify-content:center;padding:24px;}
+.master-json-overlay.open{display:flex;}
+.master-json-modal{background:#fff;border-radius:16px;width:100%;max-width:900px;max-height:88vh;display:flex;flex-direction:column;
+  box-shadow:0 30px 70px rgba(0,0,0,.35);}
+.master-json-modal .mjm-head{padding:18px 22px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;}
+.master-json-modal .mjm-head h3{font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;}
+.master-json-modal .mjm-body{padding:16px 22px;overflow:auto;flex:1;}
+.master-json-modal textarea{width:100%;height:100%;min-height:420px;font-family:'SFMono-Regular',Consolas,Menlo,monospace;
+  font-size:11.5px;line-height:1.55;padding:14px;border-radius:8px;border:1px solid var(--border-color);background:#0f172a;color:#e2e8f0;resize:vertical;}
+.master-json-modal .mjm-foot{padding:14px 22px;border-top:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+
+/* Ministry management sidebar */
+.ministry-sidebar-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:1200;display:none;}
+.ministry-sidebar-overlay.open{display:block;}
+.ministry-sidebar{position:fixed;top:0;right:0;height:100%;width:440px;max-width:92vw;background:#fff;
+  box-shadow:-12px 0 40px rgba(0,0,0,.25);transform:translateX(100%);transition:transform .28s ease;
+  display:flex;flex-direction:column;z-index:1201;}
+.ministry-sidebar-overlay.open .ministry-sidebar{transform:translateX(0);}
+.ms-head{padding:18px 22px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;
+  align-items:center;flex-shrink:0;}
+.ms-head h3{font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;}
+.ms-head p{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+.ms-body{padding:16px 22px;overflow-y:auto;flex:1;}
+.ms-foot{padding:14px 22px;border-top:1px solid var(--border-color);flex-shrink:0;background:var(--bg-tertiary);}
+.ms-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border-color);}
+.ms-row:last-child{border-bottom:none;}
+.ms-swatch{width:30px;height:30px;border-radius:8px;border:1px solid var(--border-color);padding:0;cursor:pointer;flex-shrink:0;}
+.ms-fields{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0;}
+.ms-input{font-size:12.5px;font-family:inherit;padding:6px 9px;border-radius:6px;border:1px solid var(--border-color);width:100%;}
+.ms-input:focus{outline:none;border-color:var(--primary);}
+.ms-input.ms-id{background:var(--bg-tertiary);color:var(--text-muted);cursor:not-allowed;}
+.ms-inline{display:flex;gap:6px;}
+.ms-inline .ms-input{flex:1;min-width:0;}
+.ms-usage{font-size:10px;color:var(--text-muted);white-space:nowrap;flex-shrink:0;}
+.ms-usage.ms-usage-active{color:var(--primary);font-weight:600;}
+.ms-del{background:none;border:1px solid var(--border-color);border-radius:6px;width:30px;height:30px;flex-shrink:0;
+  cursor:pointer;color:var(--text-muted);font-size:13px;display:flex;align-items:center;justify-content:center;}
+.ms-del:hover{background:var(--error-light);border-color:#fca5a5;color:var(--error);}
+.ms-add-box{margin-top:14px;padding:14px;border-radius:10px;border:1px dashed var(--border-color);background:var(--bg-tertiary);}
+.ms-add-box .ms-add-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:10px;}
+.ms-add-grid{display:flex;flex-direction:column;gap:8px;}
+.ms-msg{font-size:11.5px;font-weight:600;margin-top:8px;min-height:16px;}
+.ms-msg.err{color:var(--error);}
+.ms-msg.ok{color:var(--success);}
+.ms-empty{font-size:12px;color:var(--text-muted);text-align:center;padding:20px 0;}
+</style>
+</head>
+<body>
+
+<div id="login-overlay" style="position:fixed;inset:0;background:#0f172a;display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px;">
+  <div style="background:#fff;border-radius:14px;padding:32px 30px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.4);">
+    <h2 style="font-family:'Outfit',sans-serif;font-size:19px;font-weight:800;margin-bottom:4px;">BN GTCI 2025</h2>
+    <p style="font-size:12px;color:#64748b;margin-bottom:20px;">Sign in with your team account to access the live workspace.</p>
+    <form id="login-form" onsubmit="return handleLoginSubmit(event)">
+      <input id="login-email" type="email" placeholder="Email" required autocomplete="username"
+        style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;margin-bottom:10px;">
+      <input id="login-password" type="password" placeholder="Password" required autocomplete="current-password"
+        style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13.5px;margin-bottom:14px;">
+      <button type="submit" id="login-submit-btn" style="width:100%;padding:10px;border:none;border-radius:8px;background:#2563eb;color:#fff;font-weight:700;font-size:13.5px;cursor:pointer;">Sign In</button>
+      <p id="login-error" style="color:#dc2626;font-size:12px;margin-top:10px;display:none;"></p>
+    </form>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <h1>BN GTCI 2025</h1>
+      <p>All 77 Indicators · by saifulazlin</p>
+    </div>
+    <div class="topbar-actions">
+      <span id="user-badge" style="font-size:11px;font-weight:600;padding:6px 10px;border-radius:20px;background:#eff6ff;color:#2563eb;display:none;align-items:center;gap:6px;"></span>
+      <span id="sync-badge" onclick="showSyncErrorDetail()" style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:20px;background:#f1f5f9;color:#64748b;display:inline-flex;align-items:center;gap:5px;">● connecting…</span>
+      <button class="btn" id="edit-mode-btn" onclick="toggleEditMode()">✏️ Edit Mode</button>
+      <button class="btn" id="master-json-btn" onclick="openMasterJsonModal()" style="display:none;">🧬 Edit Full JSON</button>
+      <button class="btn" id="manage-ministries-btn" onclick="openMinistrySidebar()" style="display:none;">🏛️ Manage Ministries</button>
+      <button class="btn" id="discard-edits-btn" onclick="discardEdits()" style="display:none;" title="Reverts everyone's live workspace to the last synced state">↺ Discard Edits (affects everyone)</button>
+      <button class="btn" id="download-json-btn" onclick="downloadUpdatedJson()" title="Saves an offline backup copy — not required, changes are already live">💾 Download Backup Copy</button>
+      <button class="btn" onclick="resetFilters()">↺ Reset Filters</button>
+      <button class="btn btn-primary" onclick="exportCSV()">Export Filtered CSV</button>
+    </div>
+  </div>
+
+  <div class="edit-banner" id="edit-banner">
+    <span class="eb-dot"></span>
+    <span>Edit mode is on — click any highlighted field to change it. Changes sync automatically to Firebase for everyone signed in (watch the status badge, top right) — <b>no download or manual file replacement needed</b>. Each indicator also has an "Edit Full Record JSON" option in its detail panel for advanced edits. <b>Download Backup Copy</b> is optional, just saves an offline snapshot for your records.</span>
+  </div>
+
+  <div class="hero">
+    <h2>Brunei Darussalam — GTCI 2025 Full Indicator Review</h2>
+    <p>Every one of the 77 GTCI indicators in a single searchable, filterable view — scores, ranks, Singapore benchmarks, responsible ministries, source-submission mechanics, MOE playbook notes, and data-gap fixes, synced live via Firebase for the whole team.</p>
+    <p class="meta-line" id="meta-line">Loading data…</p>
+    <button class="btn methodology-btn" onclick="openMethodologySidebar()">📘 GTCI 2023 → 2025 Methodology Changes</button>
+  </div>
+
+  <div id="app-body">
+    <div class="loading"><div class="spinner"></div>Connecting to live workspace…</div>
+  </div>
+
+  <footer>GTCI 2025 Indicator Intelligence · single-page view consolidated from Executive Overview, Priority Sectors, Ministry Source Mapping &amp; Education Deep Dive · live-synced via Firebase</footer>
+</div>
+
+<div class="kpi-modal-overlay" id="kpi-modal-overlay" onclick="if(event.target===this) closeKpiModal()">
+  <div class="kpi-modal" id="kpi-modal-box"></div>
+</div>
+
+<div class="sidebar-overlay" id="methodology-overlay" onclick="if(event.target===this) closeMethodologySidebar()">
+  <div class="sidebar-panel" id="methodology-panel">
+    <div class="sb-head">
+      <div>
+        <h3>GTCI 2023 → 2025 Methodology Changes</h3>
+        <p>How the underlying GTCI variable set was adjusted between the 2023 and 2025 editions — replacements, code changes, methodology updates at source, and newly introduced indicators. Indicators tagged <span class="new-tag">NEW</span> throughout this dashboard are the "New Addition" rows below.</p>
+      </div>
+      <button class="kpi-modal-close" onclick="closeMethodologySidebar()">✕</button>
+    </div>
+    <div class="sb-body" id="methodology-body"></div>
+  </div>
+</div>
+
+<div class="master-json-overlay" id="master-json-overlay" onclick="if(event.target===this) closeMasterJsonModal()">
+  <div class="master-json-modal">
+    <div class="mjm-head">
+      <h3>Edit Full Dataset JSON</h3>
+      <button class="btn" onclick="closeMasterJsonModal()">✕ Close</button>
+    </div>
+    <div class="mjm-body">
+      <textarea id="master-json-textarea" spellcheck="false"></textarea>
+    </div>
+    <div class="mjm-foot">
+      <span class="raw-json-msg" id="master-json-msg"></span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="closeMasterJsonModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="applyMasterJson()">Apply Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ministry-sidebar-overlay" id="ministry-sidebar-overlay" onclick="if(event.target===this) closeMinistrySidebar()">
+  <div class="ministry-sidebar">
+    <div class="ms-head">
+      <div>
+        <h3>🏛️ Manage Ministries</h3>
+        <p>Add, rename or remove ministries — feeds every ministry dropdown &amp; filter</p>
+      </div>
+      <button class="btn" onclick="closeMinistrySidebar()">✕ Close</button>
+    </div>
+    <div class="ms-body" id="ministry-sidebar-body"></div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyB54ArigQ0fFUOUIP4m_4GOu1aamcCZAJc",
+  authDomain: "gtcibn25.firebaseapp.com",
+  databaseURL: "https://gtcibn25-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gtcibn25",
+  storageBucket: "gtcibn25.firebasestorage.app",
+  messagingSenderId: "517287023900",
+  appId: "1:517287023900:web:49f2542a3f907c309f56d9"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const firebaseDB = firebase.database();
+const firebaseAuth = firebase.auth();
+
+// Real per-person sign-in. Only accounts you create in the Firebase Console (Authentication → Users)
+// can log in — there is no self-signup on this page. Rules on the database should require auth != null.
+let currentUser = null;
+
+firebaseAuth.onAuthStateChanged(user => {
+  currentUser = user;
+  const overlay = document.getElementById('login-overlay');
+  const badge = document.getElementById('user-badge');
+  if(user){
+    overlay.style.display = 'none';
+    if(badge){
+      badge.style.display = 'inline-flex';
+      badge.innerHTML = esc(user.email) + ' &nbsp;<a href="#" onclick="handleSignOut(event)" style="color:#2563eb;text-decoration:underline;">Sign out</a>';
+    }
+    loadData();
+  } else {
+    overlay.style.display = 'flex';
+    if(badge) badge.style.display = 'none';
+  }
+});
+
+function handleLoginSubmit(ev){
+  ev.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-submit-btn');
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  firebaseAuth.signInWithEmailAndPassword(email, pass)
+    .catch(err => {
+      const messages = {
+        'auth/invalid-email': 'That email address looks invalid.',
+        'auth/user-not-found': 'No account with that email. Ask an admin to create one.',
+        'auth/wrong-password': 'Incorrect password.',
+        'auth/invalid-credential': 'Incorrect email or password.',
+        'auth/too-many-requests': 'Too many attempts — try again in a bit.'
+      };
+      errEl.textContent = messages[err.code] || ('Sign-in failed: ' + err.message);
+      errEl.style.display = 'block';
+    })
+    .finally(()=>{
+      btn.disabled = false; btn.textContent = 'Sign In';
+    });
+  return false;
+}
+
+function handleSignOut(ev){
+  if(ev) ev.preventDefault();
+  firebaseAuth.signOut();
+}
+</script>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+let MASTER = null;
+let INDICATORS = [];      // enriched working copies
+let MIN_BY_ID = {};
+let SRC_BY_ID = {};
+let SECTOR_BY_ID = {};
+
+const filters = {
+  search: '',
+  quick: new Set(),                 // quickwin | crosscut | gap23 | nodata | beatssg | critical100 | excellent
+  pillar: new Set(),                 // gtci_pillar_group values
+  ministry: new Set(),               // ministry ids (primary or secondary match)
+  srcgroup: new Set(),               // source_groups ids
+  agency: new Set(),                 // submission_agency values
+  gap: 'all'                         // all | beats | small | moderate | large
+};
+let sortCol = 'code', sortAsc = true;
+let expandedCode = null;
+let KPI_DEFS = [];        // scorecard definitions, populated by renderKPIs(), read by the exploded modal
+let editMode = false;
+let hasEdits = false;
+let ORIGINAL_MASTER_STRING = null;   // snapshot taken right after load, used by "Discard Edits"
+
+// ── Firebase live-sync state ──────────────────────────────
+let fbMetaRef = null;
+let fbIndicatorsRef = null;
+let suppressRemote = false;   // true while our own write is in flight, so the echo doesn't re-render
+let syncDebounceTimer = null;
+let syncStatus = 'idle';      // idle | syncing | synced | error | offline
+let lastSyncErrorDetail = null;
+let pendingIndicatorSyncs = new Set();  // indicator codes queued to push
+let pendingMetaSync = false;            // whether ministries/sources/sectors/_meta need pushing
+
+const PGROUP_COLORS = {Attract:'#7c3aed',Enable:'#0369a1',Grow:'#16a34a',Retain:'#dc2626','Vocational and Technical Skills':'#ca8a04','Generalist Adaptive Skills':'#0891b2'};
+const BAND_COLORS = {EXCELLENT:'#16a34a',GOOD:'#22c55e',MODERATE:'#d97706',WEAK:'#ea580c',CRITICAL:'#dc2626',NO_DATA:'#94a3b8'};
+const BAND_LABELS = {EXCELLENT:'Excellent',GOOD:'Good',MODERATE:'Moderate',WEAK:'Weak',CRITICAL:'Critical',NO_DATA:'No Data'};
+const BAND_RANGES = {EXCELLENT:'80–100',GOOD:'65–79',MODERATE:'45–64',WEAK:'27–44',CRITICAL:'0–26',NO_DATA:'no score'};
+const SECTOR_PALETTE = ['#f59e0b','#16a34a','#0369a1','#db2777','#7c3aed','#0891b2'];
+
+// ── GTCI 2023 → 2025 methodology changes (Table 1) ──────────
+// Codes whose 2025 status is "New Addition" get a NEW tag wherever shown.
+const NEW_INDICATOR_CODES = new Set(['1.2.6','2.1.6','4.1.6','4.1.7','4.2.5','6.1.2','6.1.7','6.2.2','6.2.3']);
+const METHODOLOGY_CHANGES = [
+  {oldCode:'1.2.5', oldName:'ICT infrastructure', adj:'Replaced', newCode:'1.2.5', newName:'Population covered by at least a 3G mobile network'},
+  {oldCode:'',      oldName:'',                    adj:'New Addition', newCode:'1.2.6', newName:'Internet access in schools'},
+  {oldCode:'1.2.6', oldName:'Urbanisation',        adj:'Change in Code; Change in Data Source', newCode:'1.2.7', newName:'Urbanisation'},
+  {oldCode:'2.1.3', oldName:'Migrant stock',        adj:'Methodology Changed at Source', newCode:'2.1.3', newName:'Migrant stock'},
+  {oldCode:'2.1.5', oldName:'Brain gain',           adj:'Methodology Changed at Source', newCode:'2.1.5', newName:'Brain gain'},
+  {oldCode:'',      oldName:'',                    adj:'New Addition', newCode:'2.1.6', newName:'AI skills migration'},
+  {oldCode:'4.1.3', oldName:'Brain retention',      adj:'Methodology Changed at Source', newCode:'4.1.3', newName:'Brain retention'},
+  {oldCode:'',      oldName:'',                    adj:'New Addition', newCode:'4.1.6', newName:'Protect Against Future Disasters'},
+  {oldCode:'',      oldName:'',                    adj:'New Addition', newCode:'4.1.7', newName:'Household Financial Resilience'},
+  {oldCode:'',      oldName:'',                    adj:'New Addition', newCode:'4.2.5', newName:'Employee Wellbeing'},
+  {oldCode:'6.1.2', oldName:'Population with tertiary education', adj:'Removed', newCode:'', newName:''},
+  {oldCode:'',      oldName:'',                    adj:'New Addition', newCode:'6.1.2', newName:'Soft Skills'},
+  {oldCode:'',      oldName:'',                    adj:'New Addition', newCode:'6.1.7', newName:'AI talent concentration'},
+  {oldCode:'6.2.1', oldName:'Innovation output',    adj:'Replaced', newCode:'6.2.1', newName:'ICT services exports'},
+  {oldCode:'',      oldName:'',                    adj:'New Addition', newCode:'6.2.2', newName:'Mobile apps development'},
+  {oldCode:'',      oldName:'',                    adj:'New Addition', newCode:'6.2.3', newName:'Intellectual property receipts (% of total trade)'},
+  {oldCode:'6.2.2', oldName:'High-value exports',   adj:'Change in Code', newCode:'6.2.4', newName:'High-value exports'},
+  {oldCode:'6.2.3', oldName:'Software development', adj:'Change in Code; Methodology Changed at Source', newCode:'6.2.5', newName:'Software development'},
+  {oldCode:'6.2.4', oldName:'New business density', adj:'Change in Code', newCode:'6.2.6', newName:'New business density'},
+  {oldCode:'6.2.5', oldName:'Scientific journal articles', adj:'Change in Code', newCode:'6.2.7', newName:'Scientific journal articles'},
+];
+function newBadge(code){ return NEW_INDICATOR_CODES.has(code) ? '<span class="new-tag">NEW</span>' : ''; }
+
+// Single source of truth for indicators normalised to a 0 score that still carry an
+// official GTCI rank (as opposed to genuine "No Data" indicators). Referenced by both
+// the KPI scorecard (renderKPIs) and the quick-filter matcher (matchesQuick) so the two
+// can never drift out of sync with each other.
+const ZERO_SCORE_CODES = ['3.2.1','6.2.3','6.2.6'];
+
+// Single source of truth for the "Gap vs Singapore" filter buttons — used both to render
+// the button row and (via g.key) to drive setGap()/getFiltered() filtering, so labels,
+// colors, and filter values can never fall out of step with each other.
+const GAP_OPTIONS = [
+  {key:'all',      label:'All',              color:'#0369a1'},
+  {key:'beats',    label:'Beats SG',         color:'#059669'},
+  {key:'small',    label:'Small &lt;10pts',  color:'#16a34a'},
+  {key:'moderate', label:'Moderate 10–30',   color:'#d97706'},
+  {key:'large',    label:'Large 30+',        color:'#dc2626'},
+];
+
+// ── Sub-pillar rollup scores/ranks (Brunei) — from GTCI 2025 country profile PDF ──
+const SUBPILLAR_DATA = {
+  '1.1': {name:'Regulatory Landscape',            score:80.43, rank:15},
+  '1.2': {name:'Market Landscape',                score:45.38, rank:82},
+  '1.3': {name:'Business and Labour Landscape',   score:43.08, rank:93},
+  '2.1': {name:'External Openness',               score:53.04, rank:37},
+  '2.2': {name:'Internal Openness',                score:59.12, rank:87},
+  '3.1': {name:'Formal Education',                score:30.27, rank:45},
+  '3.2': {name:'Lifelong Learning',                score:31.12, rank:87},
+  '3.3': {name:'Access to Growth Opportunities',   score:58.24, rank:44},
+  '4.1': {name:'Sustainability',                   score:68.30, rank:25},
+  '4.2': {name:'Lifestyle',                        score:62.69, rank:60},
+  '5.1': {name:'Mid-level Skills',                 score:61.21, rank:17},
+  '5.2': {name:'Employability',                    score:63.14, rank:59},
+  '6.1': {name:'High-level Skills',                score:46.07, rank:22},
+  '6.2': {name:'Talent Impact',                    score:11.88, rank:106},
+};
+function openMethodologySidebar(){
+  const body = document.getElementById('methodology-body');
+  body.innerHTML = `<table class="sb-table">
+    <thead><tr><th>Variable Code</th><th>GTCI 2023</th><th>Adjustment</th><th>New Code</th><th>GTCI 2025</th></tr></thead>
+    <tbody>${METHODOLOGY_CHANGES.map(r=>`
+      <tr class="${r.adj==='New Addition'?'sb-new':''}">
+        <td class="sb-code">${esc(r.oldCode)||'—'}</td>
+        <td>${esc(r.oldName)||'—'}</td>
+        <td class="sb-adj">${esc(r.adj)}${r.adj==='New Addition'?' <span class="new-tag">NEW</span>':''}</td>
+        <td class="sb-code">${esc(r.newCode)||'—'}</td>
+        <td>${esc(r.newName)||'—'}</td>
+      </tr>`).join('')}</tbody>
+  </table>`;
+  document.getElementById('methodology-overlay').classList.add('open');
+}
+function closeMethodologySidebar(){
+  document.getElementById('methodology-overlay').classList.remove('open');
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function isNA(v){ return v===null || v===undefined || v==='NA' || v===''; }
+function num(v){ return isNA(v) ? null : Number(v); }
+function esc(s){
+  if(s===null||s===undefined) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function fmt2(v){ const n=num(v); return n===null ? '—' : n.toFixed(2); }
+function fmtInt(v){ const n=num(v); return n===null ? '—' : String(Math.round(n)); }
+function fmtGap(v){ const n=num(v); if(n===null) return '—'; return (n>0?'+':'')+n.toFixed(2); }
+function gapClass(v){ const n=num(v); if(n===null) return 'gap-na'; return n>=0 ? 'gap-pos' : 'gap-neg'; }
+function scoreColor(band){ return BAND_COLORS[band] || 'var(--text-muted)'; }
+function bandFromScore(score){
+  const n = num(score);
+  if(n===null) return 'NO_DATA';
+  if(n>=80) return 'EXCELLENT';
+  if(n>=65) return 'GOOD';
+  if(n>=45) return 'MODERATE';
+  if(n>=27) return 'WEAK';
+  return 'CRITICAL';
+}
+function copyText(btn, text){
+  navigator.clipboard.writeText(text||'').then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('copied'); }, 1600);
+  }).catch(()=>{
+    const ta=document.createElement('textarea'); ta.value=text||''; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  });
+}
+function sectorShortTitle(title){
+  return (title||'').replace(/^.*?SECTOR\s*\d+:\s*/i,'').trim();
+}
+
+/* ============================================================
+   LOAD DATA
+   ============================================================ */
+async function loadData(){
+  setSyncBadge('syncing', '● connecting…');
+  fbMetaRef = firebaseDB.ref('gtci_master_data/meta');
+  fbIndicatorsRef = firebaseDB.ref('gtci_master_data/indicators');
+
+  try{
+    const metaSnap = await fbMetaRef.once('value');
+    if(metaSnap.exists()){
+      const meta = metaSnap.val();
+      const indSnap = await fbIndicatorsRef.once('value');
+      MASTER = buildMasterFromParts(meta, indSnap.val() || {});
+    } else {
+      // Nothing in Firebase yet — seed it from the static JSON file so this becomes source of truth.
+      const resp = await fetch('gtci_master_data.json');
+      if(!resp.ok) throw new Error('HTTP '+resp.status);
+      MASTER = await resp.json();
+      await seedFirebase(MASTER);
+    }
+  }catch(err){
+    console.error('Firebase initial load failed', err);
+    // Firebase unreachable — fall back to the static file so the dashboard still works read-only.
+    try{
+      const resp = await fetch('gtci_master_data.json');
+      if(!resp.ok) throw new Error('HTTP '+resp.status);
+      MASTER = await resp.json();
+      setSyncBadge('offline', '● offline — click for details', (err.code || err.name || 'Error') + ': ' + err.message);
+    }catch(err2){
+      document.getElementById('app-body').innerHTML =
+        '<div class="empty-state">Could not load data from Firebase or <code>gtci_master_data.json</code>.<br><br>'+
+        '<span style="font-size:11px;">Firebase error: '+esc((err.code||'')+' '+err.message)+'</span><br>'+
+        '<span style="font-size:11px;">Local file error: '+esc(err2.message)+'</span></div>';
+      document.getElementById('meta-line').textContent = 'Data failed to load.';
+      return;
+    }
+  }
+
+  applyMasterToState(MASTER);
+  ORIGINAL_MASTER_STRING = JSON.stringify(MASTER);
+
+  renderShell();
+  renderKPIs();
+  renderFilterPanel();
+  applyAndRender();
+
+  if(syncStatus !== 'offline') setSyncBadge('synced', '● live');
+  attachRemoteListeners();
+}
+
+function fbKey(code){ return String(code).replace(/\./g,'_'); }
+
+function naturalCodeSort(a, b){
+  const pa = String(a.code||'').split('.').map(Number);
+  const pb = String(b.code||'').split('.').map(Number);
+  for(let i=0; i<Math.max(pa.length, pb.length); i++){
+    const va = pa[i] ?? 0, vb = pb[i] ?? 0;
+    if(va !== vb) return va - vb;
+  }
+  return 0;
+}
+
+function buildMasterFromParts(meta, indicatorsObj){
+  const indicators = Object.values(indicatorsObj || {});
+  indicators.sort(naturalCodeSort);
+  return Object.assign({}, meta, {indicators});
+}
+
+async function seedFirebase(master){
+  const {indicators, ...meta} = master;
+  const updates = {};
+  updates['gtci_master_data/meta'] = meta;
+  (indicators||[]).forEach(ind => { updates['gtci_master_data/indicators/'+fbKey(ind.code)] = ind; });
+  await firebaseDB.ref().update(updates);
+}
+
+function applyMasterToState(m){
+  MIN_BY_ID = {}; SRC_BY_ID = {}; SECTOR_BY_ID = {};
+  (m.ministries||[]).forEach(mm => MIN_BY_ID[mm.id] = mm);
+  (m.source_groups||[]).forEach(g => SRC_BY_ID[g.id] = g);
+  (m.sectors||[]).forEach(s => SECTOR_BY_ID[String(s.id)] = s);
+  INDICATORS = (m.indicators||[]).map(buildRecord);
+  document.getElementById('meta-line').textContent =
+    `${INDICATORS.length} indicators · schema ${m._meta?.schema_version||'—'} · last updated ${m._meta?.last_updated||'—'}`;
+}
+
+function setSyncBadge(status, text, detail){
+  syncStatus = status;
+  lastSyncErrorDetail = detail || null;
+  const el = document.getElementById('sync-badge');
+  if(!el) return;
+  const colors = {
+    syncing:  ['#fffbeb','#d97706'],
+    synced:   ['#ecfdf5','#059669'],
+    error:    ['#fef2f2','#dc2626'],
+    offline:  ['#f1f5f9','#64748b']
+  };
+  const [bg,fg] = colors[status] || colors.offline;
+  el.style.background = bg; el.style.color = fg;
+  el.style.cursor = detail ? 'pointer' : 'default';
+  el.title = detail ? 'Click for error details' : '';
+  el.textContent = text;
+}
+
+function showSyncErrorDetail(){
+  if(!lastSyncErrorDetail){ return; }
+  alert('Firebase sync error:\n\n' + lastSyncErrorDetail);
+}
+
+/* ============================================================
+   FIREBASE — realtime listeners (pulls in teammates' edits live)
+   Each indicator is its own node under gtci_master_data/indicators/{code},
+   so two people editing different indicators never clobber each other.
+   ============================================================ */
+function attachRemoteListeners(){
+  fbMetaRef.on('value', snap => {
+    if(suppressRemote) return;
+    const meta = snap.val();
+    if(!meta) return;
+    const {indicators, ...currentMeta} = MASTER;
+    if(JSON.stringify(meta) === JSON.stringify(currentMeta)) return;
+    Object.keys(currentMeta).forEach(k => delete MASTER[k]);
+    Object.assign(MASTER, meta);
+    applyMasterToState(MASTER);
+    renderShell();
+    renderKPIs();
+    applyAndRender();
+    flashSyncBadge();
+  }, err => {
+    console.error('Firebase meta listener error', err);
+    setSyncBadge('error', '● sync error — click for details', (err.code||err.name||'Error')+': '+err.message);
+  });
+
+  fbIndicatorsRef.on('child_changed', snap => applyRemoteIndicator(snap), err => {
+    console.error('Firebase indicators listener error', err);
+    setSyncBadge('error', '● sync error — click for details', (err.code||err.name||'Error')+': '+err.message);
+  });
+  fbIndicatorsRef.on('child_added', snap => applyRemoteIndicator(snap));
+  fbIndicatorsRef.on('child_removed', snap => {
+    if(suppressRemote) return;
+    const gone = snap.val();
+    if(!gone || !gone.code) return;
+    MASTER.indicators = (MASTER.indicators||[]).filter(i => i.code !== gone.code);
+    INDICATORS = INDICATORS.filter(i => i.code !== gone.code);
+    renderKPIs();
+    applyAndRender();
+    flashSyncBadge();
+  });
+}
+
+function applyRemoteIndicator(snap){
+  if(suppressRemote) return;
+  const incoming = snap.val();
+  if(!incoming || !incoming.code) return;
+
+  const masterIdx = (MASTER.indicators||[]).findIndex(i => i.code === incoming.code);
+  if(masterIdx >= 0){
+    if(JSON.stringify(MASTER.indicators[masterIdx]) === JSON.stringify(incoming)) return; // no real change
+    MASTER.indicators[masterIdx] = incoming;
+  } else {
+    MASTER.indicators.push(incoming);
+    MASTER.indicators.sort(naturalCodeSort);
+  }
+  buildRecord(incoming);
+  const idx = INDICATORS.findIndex(i => i.code === incoming.code);
+  if(idx >= 0) INDICATORS[idx] = incoming;
+  else { INDICATORS.push(incoming); INDICATORS.sort(naturalCodeSort); }
+
+  const wasExpanded = expandedCode;
+  renderKPIs();
+  applyAndRender();
+  if(wasExpanded){
+    const row = document.getElementById('detail-'+wasExpanded);
+    const ico = document.getElementById('ico-'+wasExpanded);
+    if(row){ row.style.display=''; if(ico) ico.textContent='▲'; expandedCode = wasExpanded; }
+  }
+  flashSyncBadge();
+}
+
+function flashSyncBadge(){
+  setSyncBadge('synced', '● live — updated by teammate');
+  setTimeout(()=>{ if(syncStatus==='synced') setSyncBadge('synced', '● live'); }, 3000);
+}
+
+/* ============================================================
+   FIREBASE — push local edits (debounced, per indicator)
+   ============================================================ */
+function queueFullSync(){
+  pendingMetaSync = true;
+  pendingIndicatorSyncs = new Set((MASTER.indicators||[]).map(i => i.code));
+  scheduleFirebaseSync();
+}
+
+function scheduleFirebaseSync(){
+  if(!fbIndicatorsRef) return;
+  setSyncBadge('syncing', '● syncing…');
+  clearTimeout(syncDebounceTimer);
+  syncDebounceTimer = setTimeout(flushFirebaseSync, 700);
+}
+
+function flushFirebaseSync(){
+  if(!fbIndicatorsRef) return;
+  if(MASTER._meta) MASTER._meta.last_updated = new Date().toISOString().slice(0,10);
+
+  const updates = {};
+  if(pendingMetaSync){
+    const {indicators, ...meta} = MASTER;
+    updates['gtci_master_data/meta'] = meta;
+  }
+  pendingIndicatorSyncs.forEach(code => {
+    const ind = MASTER.indicators.find(i => i.code === code);
+    if(ind) updates['gtci_master_data/indicators/'+fbKey(code)] = ind;
+  });
+  pendingIndicatorSyncs = new Set();
+  pendingMetaSync = false;
+
+  if(Object.keys(updates).length === 0) return;
+
+  suppressRemote = true;
+  let attempts = 0;
+  const attemptWrite = () => firebaseDB.ref().update(updates)
+    .then(()=>{
+      setSyncBadge('synced', '● live');
+      setTimeout(()=>{ suppressRemote = false; }, 400);
+    })
+    .catch(err=>{
+      attempts++;
+      console.error('Firebase sync failed (attempt '+attempts+')', err);
+      const detail = (err.code||err.name||'Error')+': '+err.message;
+      if(attempts >= 5){
+        setSyncBadge('error', '● sync failed — click for details', detail);
+        suppressRemote = false;
+        return;
+      }
+      setSyncBadge('error', '● sync failed — retrying (click for details)', detail);
+      setTimeout(attemptWrite, 4000);
+    });
+  attemptWrite();
+}
+
+function computeHaystack(i){
+  const rn = i.review_notes || {};
+  const sg = i.source_group_notes || {};
+  const moe = i.moe_notes || null;
+  const zf = i.zero_fix_notes || null;
+  const sviews = i.sector_views || [];
+
+  const primaryMin = MIN_BY_ID[i.primary_ministry];
+  const srcGroup = SRC_BY_ID[i.src_group_id];
+
+  const haystackParts = [
+    i.code,
+    i.code ? i.code.replace(/\./g,'') : null,          // "6.2.3" also searchable as "623"
+    i.name, i.pillar, i.gtci_pillar_group,
+    i.primary_ministry, primaryMin?.name, primaryMin?.short, i.csv_ministry_full,
+    (i.secondary_ministries||[]).map(id => MIN_BY_ID[id]?.name || id).join(' '),
+    (i.secondary_ministries||[]).map(id => MIN_BY_ID[id]?.short || '').join(' '),
+    i.submission_agency, i.gtci_source, i.source_name,
+    i.src_group_id, srcGroup?.label,
+    i.brunei_comment, i.brunei_challenge, i.how_to_improve_score, i.how_to_improve_reporting,
+    i.submission_notes, i.definition,
+    rn.comments, rn.insights, rn.analysis, rn.trend,
+    sg.provider, sg.mechanism, sg.agency, sg.action, sg.insight,
+    moe?.current_status, moe?.action_plan, moe?.policy_rec, moe?.moe_link,
+    zf?.fix_desc, zf?.fix_category, zf?.priority,
+    sviews.map(sv => (SECTOR_BY_ID[String(sv.sector_id)]?.title||'')+' '+(sv.why_relevant||'')+' '+(sv.suggested_policy||'')).join(' ')
+  ];
+  return haystackParts.filter(Boolean).join(' ').toLowerCase();
+}
+
+function buildRecord(i){
+  // Mutate in place (rather than cloning) so INDICATORS[n] IS MASTER.indicators[n] —
+  // any edit made through the UI writes straight back into MASTER, ready for export.
+  i._haystack = computeHaystack(i);
+  return i;
+}
+
+/* ============================================================
+   EDIT MODE — core infrastructure
+   ============================================================ */
+function findIndicatorByCid(cid){
+  return INDICATORS.find(i => i.code.replace(/\./g,'_') === cid);
+}
+
+function getByPath(obj, path){
+  return path.split('.').reduce((o,k)=> (o==null ? undefined : o[k]), obj);
+}
+function setByPath(obj, path, value){
+  const parts = path.split('.');
+  let o = obj;
+  for(let k=0;k<parts.length-1;k++){
+    if(o[parts[k]] == null) o[parts[k]] = {};
+    o = o[parts[k]];
+  }
+  o[parts[parts.length-1]] = value;
+}
+
+function markEdited(code){
+  hasEdits = true;
+  const dl = document.getElementById('download-json-btn');
+  if(dl) dl.classList.add('btn-download-pending');
+  const disc = document.getElementById('discard-edits-btn');
+  if(disc) disc.style.display = '';
+  if(code){
+    pendingIndicatorSyncs.add(code);
+    scheduleFirebaseSync();
+  } else {
+    queueFullSync(); // no code given = broad edit (e.g. full JSON replace) — sync everything
+  }
+}
+
+function commitFieldFromEl(el){
+  const cid = el.getAttribute('data-code');
+  const field = el.getAttribute('data-field');
+  const i = findIndicatorByCid(cid);
+  if(!i) return;
+
+  let value;
+  if(el.tagName === 'SELECT') value = el.value;
+  else if(el.getAttribute('data-bool') === '1') value = el.checked;
+  else if(el.getAttribute('data-list') === '1'){
+    value = el.textContent.split(',').map(s=>s.trim()).filter(Boolean);
+  } else {
+    value = el.textContent.trim();
+    if(el.getAttribute('data-number') === '1'){
+      if(value === '' || value === '—' || value === 'NA') value = null;
+      else {
+        const n = Number(value);
+        value = isNaN(n) ? getByPath(i, field) : n; // ignore unparsable edits, keep old value
+      }
+    }
+  }
+
+  const prev = getByPath(i, field);
+  if(JSON.stringify(prev) === JSON.stringify(value)) return;
+  setByPath(i, field, value);
+
+  if(field === 'primary_ministry'){
+    // Keep secondary ministries consistent: a ministry can't be both primary and secondary.
+    if(Array.isArray(i.secondary_ministries) && i.secondary_ministries.includes(value)){
+      i.secondary_ministries = i.secondary_ministries.filter(m=>m!==value);
+    }
+  }
+
+  i._haystack = computeHaystack(i);
+  markEdited(i.code);
+  renderKPIs();
+
+  if(field === 'primary_ministry'){
+    // The secondary-ministries dropdown's option list (and its excluded primary ministry)
+    // depends on primary_ministry, so refresh this row's detail panel in place.
+    refreshDetailPanel(cid);
+  }
+  if(field === 'submission_agency'){
+    // Keep the Submission Agency filter chips in sync with actual data: a renamed or
+    // newly-typed agency should be filterable immediately, and a chip whose last
+    // indicator was just reassigned should disappear rather than linger as a dead filter.
+    if(prev && filters.agency.has(prev) && !INDICATORS.some(x=>x.submission_agency===prev)){
+      filters.agency.delete(prev);
+    }
+    refreshAgencyFilterChips();
+  }
+}
+
+function commitSecondaryMinistries(selectEl){
+  const cid = selectEl.getAttribute('data-code');
+  const i = findIndicatorByCid(cid);
+  if(!i) return;
+  const values = Array.from(selectEl.selectedOptions).map(o=>o.value);
+  const prev = i.secondary_ministries || [];
+  if(JSON.stringify(prev) === JSON.stringify(values)) return;
+  i.secondary_ministries = values;
+  i._haystack = computeHaystack(i);
+  markEdited(i.code);
+  renderKPIs();
+}
+
+// Shared by renderShell() (full rebuild) and refreshAgencyFilterChips() (targeted patch
+// after an inline submission_agency edit) so the two never render the chip list differently.
+function getSubmissionAgencies(){
+  return Array.from(new Set(
+    INDICATORS.map(i=>i.submission_agency).filter(a=>a && a!=='NA' && a!=='Unknown')
+  )).sort((a,b)=>a.localeCompare(b));
+}
+function buildAgencyChipsHtml(){
+  return getSubmissionAgencies().map(a=>
+    `<button class="f-btn${filters.agency.has(a)?' active':''}" style="--bc:#475569" title="${esc(a)}" data-agency="${esc(a)}" onclick="toggleMulti('agency', this.getAttribute('data-agency'), this)">${esc(a)}</button>`
+  ).join('');
+}
+
+function refreshDetailPanel(cid){
+  const i = findIndicatorByCid(cid);
+  const panelHost = document.querySelector(`#detail-${cid} td`);
+  if(!i || !panelHost) return;
+  panelHost.innerHTML = buildDetailPanel(i);
+}
+
+function refreshAgencyFilterChips(){
+  const host = document.getElementById('f-agency');
+  if(!host) return;
+  host.innerHTML = buildAgencyChipsHtml();
+}
+
+/* ============================================================
+   SCREENSHOT — capture a complete indicator card as a PNG
+   ============================================================ */
+let html2canvasLoadPromise = null;
+
+function ensureHtml2Canvas(){
+  if(window.html2canvas) return Promise.resolve();
+  if(html2canvasLoadPromise) return html2canvasLoadPromise;
+  html2canvasLoadPromise = new Promise((resolve, reject)=>{
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload = resolve;
+    s.onerror = ()=>{ html2canvasLoadPromise = null; reject(new Error('Could not load the screenshot library — check your internet connection.')); };
+    document.head.appendChild(s);
+  });
+  return html2canvasLoadPromise;
+}
+
+// Card width decides which orientation the two-column detail grid renders in:
+// >900px keeps the desktop/landscape two-column layout; <=900px matches the
+// existing mobile media query and collapses it to one vertical column.
+const SCREENSHOT_WIDTH = { landscape: 1040, portrait: 640 };
+
+function screenshotIndicator(cid, orientation){
+  const btn = document.getElementById('shot-'+cid);
+  orientation = orientation || (window.innerWidth < 900 ? 'portrait' : 'landscape');
+  if(btn){ btn.disabled = true; btn.textContent = '⏳'; }
+
+  ensureHtml2Canvas()
+    .then(()=>renderIndicatorCard(cid, orientation))
+    .catch(err=>alert(err.message))
+    .finally(()=>{ if(btn){ btn.disabled = false; btn.textContent = '📷'; } });
+}
+
+function renderIndicatorCard(cid, orientation){
+  const i = findIndicatorByCid(cid);
+  if(!i) return;
+  const min = MIN_BY_ID[i.primary_ministry];
+  const bandColor = scoreColor(i.score_band);
+  const width = SCREENSHOT_WIDTH[orientation] || SCREENSHOT_WIDTH.landscape;
+
+  // Render the detail panel in its clean, non-edit form regardless of the page's
+  // current edit mode, so exported screenshots are never mid-edit or contenteditable.
+  const wasEditing = editMode;
+  editMode = false;
+  const detailHtml = buildDetailPanel(i);
+  editMode = wasEditing;
+
+  const card = document.createElement('div');
+  card.style.cssText = `position:fixed;top:0;left:-99999px;width:${width}px;background:#ffffff;padding:26px;box-sizing:border-box;`;
+  card.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+      <span class="row-code" style="font-size:15px;">${esc(i.code)}</span>
+      ${min?`<span class="min-pill" style="background:${min.color}1c;color:${min.color};">${esc(min.name)}</span>`:''}
+      ${i.quick_win?'<span class="flag-badge flag-qw">Quick Win</span>':''}
+      ${i.cross_cutting?'<span class="flag-badge flag-cc">Cross-Cutting</span>':''}
+    </div>
+    <div style="font-size:19px;font-weight:700;margin-bottom:14px;color:#0f172a;">${esc(i.name)}</div>
+    <div style="display:flex;gap:26px;margin-bottom:16px;flex-wrap:wrap;">
+      <div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">BN Score</div><div style="font-size:21px;font-weight:800;color:${bandColor};">${fmt2(i.bn_score)}</div></div>
+      <div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">BN Rank</div><div style="font-size:21px;font-weight:800;color:${bandColor};">${fmtInt(i.bn_rank)!=='—'?'#'+fmtInt(i.bn_rank):'—'}</div></div>
+      <div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">SG Score</div><div style="font-size:21px;font-weight:800;color:#0369a1;">${fmt2(i.sg_score)}</div></div>
+      <div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">Gap vs SG</div><div style="font-size:21px;font-weight:800;color:#0f172a;">${fmtGap(i.gap)}</div></div>
+    </div>
+    ${detailHtml}
+    <div style="margin-top:16px;padding-top:10px;border-top:1px dashed #e2e8f0;font-size:10px;color:#94a3b8;">Brunei GTCI 2025 Dashboard — captured ${new Date().toLocaleDateString()}</div>
+  `;
+  // Strip anything interactive/editable that leaked in via buildDetailPanel's markup
+  // (copy buttons, contenteditable attributes) so the exported image is a static snapshot.
+  card.querySelectorAll('[contenteditable]').forEach(el=>{ el.removeAttribute('contenteditable'); el.removeAttribute('onblur'); el.removeAttribute('onclick'); });
+  card.querySelectorAll('select, input, .copy-btn').forEach(el=>el.remove());
+
+  document.body.appendChild(card);
+
+  return window.html2canvas(card, {
+    backgroundColor: '#ffffff',
+    scale: 2,
+    useCORS: true,
+    windowWidth: width,
+    width: width
+  }).then(canvas=>{
+    document.body.removeChild(card);
+    const link = document.createElement('a');
+    link.download = `GTCI_${i.code}_${orientation}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }).catch(err=>{
+    document.body.removeChild(card);
+    throw err;
+  });
+}
+
+/* ============================================================
+   EDIT MODE — toggle, download, discard
+   ============================================================ */
+function toggleEditMode(){
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  document.getElementById('edit-mode-btn').classList.toggle('btn-edit-active', editMode);
+  document.getElementById('edit-mode-btn').textContent = editMode ? '✓ Editing…' : '✏️ Edit Mode';
+  document.getElementById('edit-banner').classList.toggle('show', editMode);
+  document.getElementById('master-json-btn').style.display = editMode ? '' : 'none';
+  document.getElementById('manage-ministries-btn').style.display = editMode ? '' : 'none';
+  if(!editMode) closeMinistrySidebar();
+  const wasExpanded = expandedCode;
+  applyAndRender();
+  if(wasExpanded){
+    const row = document.getElementById('detail-'+wasExpanded);
+    const ico = document.getElementById('ico-'+wasExpanded);
+    if(row){ row.style.display=''; if(ico) ico.textContent='▲'; expandedCode = wasExpanded; }
+  }
+}
+
+function downloadUpdatedJson(){
+  const proceed = confirm(
+    hasEdits
+      ? 'Download a backup copy of the current data (with your edits) as gtci_master_data.json?\n\nThis is just for your own records — your edits are already live in Firebase for everyone. No need to upload this file anywhere.'
+      : 'No edits have been made yet in this session. Download a backup copy of the current data anyway?'
+  );
+  if(!proceed) return;
+
+  if(MASTER._meta) MASTER._meta.last_updated = new Date().toISOString().slice(0,10);
+
+  const blob = new Blob([JSON.stringify(MASTER, null, 2)], {type:'application/json;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'gtci_master_data.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  hasEdits = false;
+  document.getElementById('download-json-btn').classList.remove('btn-download-pending');
+}
+
+function discardEdits(){
+  if(!ORIGINAL_MASTER_STRING) return;
+  if(!confirm('Discard all edits made in this session and revert everyone\'s live workspace to the last synced snapshot? This cannot be undone.')) return;
+
+  MASTER = JSON.parse(ORIGINAL_MASTER_STRING);
+  applyMasterToState(MASTER);
+
+  hasEdits = false;
+  document.getElementById('download-json-btn').classList.remove('btn-download-pending');
+  document.getElementById('discard-edits-btn').style.display = 'none';
+  expandedCode = null;
+  renderKPIs();
+  applyAndRender();
+  queueFullSync();
+}
+
+/* ============================================================
+   EDIT MODE — per-indicator raw JSON editor
+   ============================================================ */
+function toggleRawJson(cid){
+  const box = document.getElementById('rawjson-'+cid);
+  if(!box) return;
+  const opening = !box.classList.contains('open');
+  box.classList.toggle('open');
+  if(opening){
+    const i = findIndicatorByCid(cid);
+    const ta = box.querySelector('textarea');
+    ta.value = JSON.stringify(i, null, 2);
+    const msg = box.querySelector('.raw-json-msg');
+    if(msg){ msg.textContent=''; msg.className='raw-json-msg'; }
+  }
+}
+
+function applyRawJson(cid){
+  const box = document.getElementById('rawjson-'+cid);
+  const ta = box.querySelector('textarea');
+  const msg = box.querySelector('.raw-json-msg');
+  let parsed;
+  try{
+    parsed = JSON.parse(ta.value);
+  }catch(err){
+    msg.textContent = 'Invalid JSON: ' + err.message;
+    msg.className = 'raw-json-msg err';
+    return;
+  }
+  const i = findIndicatorByCid(cid);
+  if(!i){ msg.textContent='Could not find this indicator to update.'; msg.className='raw-json-msg err'; return; }
+  const originalCode = i.code;
+
+  // Replace contents in place, keeping the same object reference (and its position
+  // inside MASTER.indicators) so the export stays correctly ordered.
+  Object.keys(i).forEach(k => delete i[k]);
+  Object.assign(i, parsed);
+  i._haystack = computeHaystack(i);
+  markEdited(i.code);
+  if(i.code !== originalCode){
+    // code was changed in the raw editor — drop the stale Firebase node under the old key
+    pendingIndicatorSyncs.delete(originalCode);
+    firebaseDB.ref('gtci_master_data/indicators/'+fbKey(originalCode)).remove().catch(()=>{});
+  }
+
+  msg.textContent = 'Applied ✓ — refreshing row…';
+  msg.className = 'raw-json-msg ok';
+  renderKPIs();
+  applyAndRender();
+  setTimeout(()=>{
+    const row = document.getElementById('row-'+cid);
+    if(row) row.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 50);
+}
+
+/* ============================================================
+   EDIT MODE — full master JSON modal (edit literally anything)
+   ============================================================ */
+function openMasterJsonModal(){
+  document.getElementById('master-json-textarea').value = JSON.stringify(MASTER, null, 2);
+  const msg = document.getElementById('master-json-msg');
+  msg.textContent=''; msg.className='raw-json-msg';
+  document.getElementById('master-json-overlay').classList.add('open');
+}
+function closeMasterJsonModal(){
+  document.getElementById('master-json-overlay').classList.remove('open');
+}
+function applyMasterJson(){
+  const ta = document.getElementById('master-json-textarea');
+  const msg = document.getElementById('master-json-msg');
+  let parsed;
+  try{
+    parsed = JSON.parse(ta.value);
+  }catch(err){
+    msg.textContent = 'Invalid JSON: ' + err.message;
+    msg.className = 'raw-json-msg err';
+    return;
+  }
+  MASTER = parsed;
+  applyMasterToState(MASTER);
+
+  markEdited();
+  expandedCode = null;
+  renderShell();
+  renderKPIs();
+  applyAndRender();
+  closeMasterJsonModal();
+}
+
+/* ============================================================
+   EDIT MODE — Manage Ministries sidebar
+   Ministries live under MASTER.ministries and feed the ministry
+   filter chips, the primary/secondary ministry dropdowns, and the
+   ministry pill shown on every row — so they're managed centrally
+   here rather than edited ad hoc wherever they happen to appear.
+   ============================================================ */
+function markMetaEdited(){
+  hasEdits = true;
+  const dl = document.getElementById('download-json-btn');
+  if(dl) dl.classList.add('btn-download-pending');
+  const disc = document.getElementById('discard-edits-btn');
+  if(disc) disc.style.display = '';
+  pendingMetaSync = true;
+  scheduleFirebaseSync();
+}
+
+function slugifyMinistryId(name){
+  return String(name||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'ministry';
+}
+
+function ministryUsageCount(id){
+  return INDICATORS.reduce((n,i)=>{
+    const hit = i.primary_ministry === id || (i.secondary_ministries||[]).includes(id);
+    return n + (hit ? 1 : 0);
+  }, 0);
+}
+
+// Re-sync everything that reads MASTER.ministries after an add/edit/delete.
+function refreshMinistryDependents(){
+  applyMasterToState(MASTER);
+  renderShell();
+  renderKPIs();
+  applyAndRender();
+}
+
+function openMinistrySidebar(){
+  renderMinistrySidebar();
+  document.getElementById('ministry-sidebar-overlay').classList.add('open');
+}
+function closeMinistrySidebar(){
+  document.getElementById('ministry-sidebar-overlay').classList.remove('open');
+}
+
+function renderMinistrySidebar(){
+  const ministries = MASTER.ministries || [];
+  const body = document.getElementById('ministry-sidebar-body');
+
+  const rows = ministries.length ? ministries.map(m=>{
+    const used = ministryUsageCount(m.id);
+    return `
+    <div class="ms-row" data-mid="${esc(m.id)}">
+      <input type="color" class="ms-swatch" value="${esc(m.color||'#334155')}"
+        onchange="updateMinistryField('${esc(m.id)}','color',this.value)">
+      <div class="ms-fields">
+        <input class="ms-input" value="${esc(m.name||'')}" placeholder="Full ministry name"
+          onchange="updateMinistryField('${esc(m.id)}','name',this.value)">
+        <div class="ms-inline">
+          <input class="ms-input" value="${esc(m.short||'')}" placeholder="Short label (e.g. MOE)"
+            onchange="updateMinistryField('${esc(m.id)}','short',this.value)">
+          <input class="ms-input ms-id" value="${esc(m.id)}" readonly title="ID is fixed once created (used internally to link indicators)">
+        </div>
+      </div>
+      <span class="ms-usage ${used?'ms-usage-active':''}" title="Indicators referencing this ministry">${used} used</span>
+      <button class="ms-del" title="Delete ministry" onclick="deleteMinistry('${esc(m.id)}')">🗑</button>
+    </div>`;
+  }).join('') : '<div class="ms-empty">No ministries yet — add the first one below.</div>';
+
+  body.innerHTML = `
+    ${rows}
+    <div class="ms-add-box">
+      <div class="ms-add-title">+ Add New Ministry</div>
+      <div class="ms-add-grid">
+        <input class="ms-input" id="ms-new-name" placeholder="Full name (e.g. Ministry of Finance and Economy)">
+        <div class="ms-inline">
+          <input class="ms-input" id="ms-new-short" placeholder="Short label (e.g. MOFE)">
+          <input type="color" class="ms-swatch" id="ms-new-color" value="#2563eb">
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:10px;" onclick="addMinistry()">+ Add Ministry</button>
+      <div class="ms-msg" id="ms-add-msg"></div>
+    </div>
+  `;
+}
+
+function updateMinistryField(id, field, value){
+  const m = (MASTER.ministries||[]).find(mm=>mm.id===id);
+  if(!m) return;
+  value = value.trim ? value.trim() : value;
+  const oldValue = m[field];
+  if(oldValue === value) return;
+  m[field] = value;
+  markMetaEdited();
+
+  // If the full name changed, cascade the rename into any indicator's raw
+  // csv_ministry_full text (the legacy plain-text ministry field kept as a
+  // fallback for records not yet mapped to a ministry id) so the old name
+  // doesn't linger anywhere on the dashboard.
+  let renamed = 0;
+  if(field === 'name' && oldValue){
+    (MASTER.indicators||[]).forEach(i=>{
+      if(i.csv_ministry_full === oldValue){
+        i.csv_ministry_full = value;
+        i._haystack = computeHaystack(i);
+        pendingIndicatorSyncs.add(i.code);
+        renamed++;
+      }
+    });
+  }
+
+  refreshMinistryDependents();
+  // Re-render sidebar list (usage counts / values) without losing scroll unnecessarily.
+  renderMinistrySidebar();
+
+  const msg = document.getElementById('ms-add-msg');
+  if(msg){
+    if(field === 'name'){
+      msg.textContent = renamed
+        ? `Renamed ✓ — updated ${renamed} indicator record${renamed===1?'':'s'} still referencing the old name.`
+        : 'Renamed ✓ — all dropdowns, filters and pills now show the new name.';
+      msg.className = 'ms-msg ok';
+    } else if(field === 'short'){
+      msg.textContent = 'Acronym updated ✓ — all dropdowns, filters and pills now show the new acronym.';
+      msg.className = 'ms-msg ok';
+    } else {
+      msg.textContent = '';
+      msg.className = 'ms-msg';
+    }
+  }
+}
+
+function addMinistry(){
+  const nameEl = document.getElementById('ms-new-name');
+  const shortEl = document.getElementById('ms-new-short');
+  const colorEl = document.getElementById('ms-new-color');
+  const msg = document.getElementById('ms-add-msg');
+
+  const name = nameEl.value.trim();
+  const short = shortEl.value.trim();
+  const color = colorEl.value || '#2563eb';
+
+  if(!name){
+    msg.textContent = 'Ministry name is required.';
+    msg.className = 'ms-msg err';
+    return;
+  }
+
+  MASTER.ministries = MASTER.ministries || [];
+  let id = slugifyMinistryId(short || name);
+  let suffix = 2;
+  while(MASTER.ministries.some(m=>m.id===id)){ id = slugifyMinistryId(short || name) + '_' + suffix; suffix++; }
+
+  MASTER.ministries.push({id, name, short: short || name, color});
+  MASTER.ministries.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+
+  markMetaEdited();
+  refreshMinistryDependents();
+  renderMinistrySidebar();
+
+  msg.textContent = `Added "${name}" ✓`;
+  msg.className = 'ms-msg ok';
+}
+
+function deleteMinistry(id){
+  const m = (MASTER.ministries||[]).find(mm=>mm.id===id);
+  if(!m) return;
+  const used = ministryUsageCount(id);
+
+  const warning = used
+    ? `"${m.name}" is referenced by ${used} indicator${used===1?'':'s'}. Deleting it will clear those references (indicators will be left without this ministry assigned). Continue?`
+    : `Delete "${m.name}"? This cannot be undone.`;
+  if(!confirm(warning)) return;
+
+  if(used){
+    (MASTER.indicators||[]).forEach(i=>{
+      let touched = false;
+      if(i.primary_ministry === id){ i.primary_ministry = ''; touched = true; }
+      if((i.secondary_ministries||[]).includes(id)){
+        i.secondary_ministries = i.secondary_ministries.filter(mid=>mid!==id);
+        touched = true;
+      }
+      if(touched){
+        i._haystack = computeHaystack(i);
+        pendingIndicatorSyncs.add(i.code);
+      }
+    });
+  }
+
+  MASTER.ministries = (MASTER.ministries||[]).filter(mm=>mm.id!==id);
+  filters.ministry.delete(id); // avoid a phantom filter with no matching button once the ministry is gone
+  markMetaEdited();
+  refreshMinistryDependents();
+  renderMinistrySidebar();
+}
+
+/* ============================================================
+   RENDER: SHELL (toolbar + table skeleton) — built once
+   ============================================================ */
+function renderShell(){
+  const ministries = MASTER.ministries || [];
+  const srcGroups = MASTER.source_groups || [];
+  const pillarGroups = Object.keys(PGROUP_COLORS).filter(p => INDICATORS.some(i=>i.gtci_pillar_group===p));
+
+  document.getElementById('app-body').innerHTML = `
+    <div class="kpi-grid" id="kpi-grid"></div>
+
+    <div class="toolbar">
+      <div class="search-row">
+        <input class="search-box" id="search-input" placeholder="Search any indicator — name, code, ministry, source, comments, analysis, fix notes…" oninput="onSearch(this.value)">
+        <button class="btn adv-toggle" onclick="toggleAdv()">Advanced Filters <span id="adv-chevron">▼</span></button>
+      </div>
+
+      <div class="filter-panel" id="filter-panel">
+        <div class="f-row">
+          <div class="f-label">Pillar Group</div>
+          <div class="f-opts" id="f-pillar">
+            ${pillarGroups.map(p=>`<button class="f-btn${filters.pillar.has(p)?' active':''}" style="--bc:${PGROUP_COLORS[p]}" onclick="toggleMulti('pillar','${p}',this)">${esc(p)}</button>`).join('')}
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">Ministry</div>
+          <div class="f-opts" id="f-ministry">
+            ${ministries.map(m=>`<button class="f-btn${filters.ministry.has(m.id)?' active':''}" style="--bc:${m.color||'#334155'}" title="${esc(m.name)}" onclick="toggleMulti('ministry','${m.id}',this)">${esc(m.short||m.id)}</button>`).join('')}
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">Source Group</div>
+          <div class="f-opts" id="f-srcgroup">
+            ${srcGroups.map(g=>`<button class="f-btn${filters.srcgroup.has(g.id)?' active':''}" data-gid="${g.id}" style="--bc:${g.color||'#334155'}" title="${esc(g.label)}" onclick="toggleMulti('srcgroup','${g.id}',this)">${esc((g.label||'').replace(/^GROUP\\s*[A-Z]:\\s*/i,''))}</button>`).join('')}
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">Submission Agency</div>
+          <div class="f-opts" id="f-agency" style="max-height:140px;overflow-y:auto;">
+            ${buildAgencyChipsHtml()}
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">Gap vs Singapore</div>
+          <div class="f-opts" id="f-gap">
+            ${GAP_OPTIONS.map(g=>`<button class="f-btn${filters.gap===g.key?' active':''}" style="--bc:${g.color}" onclick="setGap('${g.key}',this)">${g.label}</button>`).join('')}
+          </div>
+        </div>
+        <div class="f-row" style="justify-content:flex-end;border-top:1px dashed var(--border-color);padding-top:12px;margin-top:2px;">
+          <button class="btn" onclick="resetFilters()">↺ Reset All Filters</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-bar">
+      <div class="rb-count">Showing <b id="rb-count">0</b> of ${INDICATORS.length} indicators</div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="ind-table">
+        <thead><tr>
+          <th onclick="sortBy('code')">Code <span class="si">↕</span></th>
+          <th onclick="sortBy('name')">Indicator <span class="si">↕</span></th>
+          <th>Pillar</th>
+          <th>Ministry</th>
+          <th onclick="sortBy('bn_score')">BN Score <span class="si">↕</span></th>
+          <th onclick="sortBy('bn_rank')">BN Rank <span class="si">↕</span></th>
+          <th onclick="sortBy('sg_score')">SG Score <span class="si">↕</span></th>
+          <th onclick="sortBy('sg_rank')">SG Rank <span class="si">↕</span></th>
+          <th onclick="sortBy('gap')">Gap <span class="si">↕</span></th>
+          <th>Flags</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="ind-tbody"></tbody>
+      </table>
+    </div>
+  `;
+}
+
+function toggleAdv(){
+  const p = document.getElementById('filter-panel');
+  const chev = document.getElementById('adv-chevron');
+  p.classList.toggle('open');
+  chev.textContent = p.classList.contains('open') ? '▲' : '▼';
+}
+
+/* ============================================================
+   RENDER: KPI cards (click-to-filter shortcuts)
+   ============================================================ */
+function renderKPIs(){
+  const total = INDICATORS.length;
+  const beatsSg = INDICATORS.filter(i=>matchesQuick(i,'beatssg')).length;
+  const noData = INDICATORS.filter(i=>matchesQuick(i,'nodata')).length;
+  const zeroScore = INDICATORS.filter(i=>matchesQuick(i,'zeroscore')).length;
+  const wefEos = INDICATORS.filter(i=>i.src_group_id==='grpB').length;
+  const iloIlostat = INDICATORS.filter(i=>i.src_group_id==='grpA').length;
+  const unescoUis = INDICATORS.filter(i=>i.src_group_id==='grpC').length;
+  const worldBank = INDICATORS.filter(i=>i.src_group_id==='grpD').length;
+  const imfTrade = INDICATORS.filter(i=>i.src_group_id==='grpE').length;
+
+  // Each scorecard now carries everything the exploded modal needs: which indicators
+  // belong to it (match), the per-row stat to display (stat), and a plain-language
+  // description of what the number means.
+  KPI_DEFS = [
+    {id:'total', v: total, l:'Total Indicators', c:'#0369a1',
+      desc:'Every indicator tracked across all 6 GTCI pillars — Enable, Attract, Grow, Retain, Vocational &amp; Technical Skills, and Generalist Adaptive Skills.',
+      match: ()=>true, stat: i=>fmt2(i.bn_score)+' pts', filterKey:null},
+    {id:'beatssg', v: beatsSg, l:'Beats Singapore', c:'#059669',
+      desc:'Indicators where Brunei\u2019s score is currently higher than Singapore\u2019s benchmark score — a positive gap.',
+      match: i=>matchesQuick(i,'beatssg'), stat: i=>fmtGap(i.gap), filterKey:'beatssg'},
+    {id:'nodata', v: noData, l:'No Data / N/A', c:'#64748b',
+      desc:'Indicators for which Brunei currently has no reported score or rank in the GTCI dataset.',
+      match: i=>matchesQuick(i,'nodata'), stat: ()=>'—', filterKey:'nodata'},
+    {id:'zeroscore', v: zeroScore, l:'0 Score (Ranked)', c:'#dc2626',
+      desc:'Indicators normalised to a score of 0 that still carry an official GTCI rank — 3.2.1 (Business Masters Education), 6.2.3 (Intellectual Property Receipts), and 6.2.6 (New Business Density). Unlike "No Data" indicators, Brunei is measured and ranked here — the underlying value simply normalises to zero.',
+      match: i=>ZERO_SCORE_CODES.includes(i.code), stat: i=>'#'+fmtInt(i.bn_rank), filterKey:'zeroscore'},
+    {id:'wefeos', v: wefEos, l:'WEF Executive Opinion Survey', c:'#7c3aed',
+      desc:'Indicators sourced from the World Economic Forum\u2019s Executive Opinion Survey (GROUP B) — perception-based data gathered from business executives.',
+      match: i=>i.src_group_id==='grpB', stat: i=>fmt2(i.bn_score)+' pts', filterKey:'srcgroup:grpB'},
+    {id:'iloilostat', v: iloIlostat, l:'ILO ILOSTAT', c:'#0369a1',
+      desc:'Indicators sourced from the International Labour Organization\u2019s ILOSTAT database (GROUP A) — official labour market statistics.',
+      match: i=>i.src_group_id==='grpA', stat: i=>fmt2(i.bn_score)+' pts', filterKey:'srcgroup:grpA'},
+    {id:'unescouis', v: unescoUis, l:'UNESCO Institute of Statistics', c:'#16a34a',
+      desc:'Indicators sourced from the UNESCO Institute for Statistics (GROUP C) — official education statistics.',
+      match: i=>i.src_group_id==='grpC', stat: i=>fmt2(i.bn_score)+' pts', filterKey:'srcgroup:grpC'},
+    {id:'worldbank', v: worldBank, l:'World Bank', c:'#ca8a04',
+      desc:'Indicators sourced from the World Bank (GROUP D) — including Worldwide Governance Indicators, Doing Business/Business Enabling data, and business registration statistics.',
+      match: i=>i.src_group_id==='grpD', stat: i=>fmt2(i.bn_score)+' pts', filterKey:'srcgroup:grpD'},
+    {id:'imftrade', v: imfTrade, l:'IMF / Trade Data', c:'#dc2626',
+      desc:'Indicators sourced from the IMF and related trade data feeds (GROUP E) — Balance of Payments / IFS submissions that also feed KOF, WTO, OECD, and World Bank series.',
+      match: i=>i.src_group_id==='grpE', stat: i=>fmt2(i.bn_score)+' pts', filterKey:'srcgroup:grpE'},
+  ];
+
+  document.getElementById('kpi-grid').innerHTML = KPI_DEFS.map((k,idx)=>
+    `<div class="kpi" onclick="openKpiModal(${idx}, event)"><div class="kv" style="color:${k.c}">${k.v}</div><div class="kl">${k.l}</div></div>`
+  ).join('');
+}
+
+/* ============================================================
+   SCORECARD "EXPLODED VIEW" MODAL
+   ============================================================ */
+function openKpiModal(idx, ev){
+  const def = KPI_DEFS[idx];
+  if(!def) return;
+  const overlay = document.getElementById('kpi-modal-overlay');
+  const box = document.getElementById('kpi-modal-box');
+
+  const matched = INDICATORS.filter(def.match);
+
+  // Breakdown chips: how the matched set splits across pillar groups
+  const byPillar = {};
+  matched.forEach(i=>{ const p = i.gtci_pillar_group || '\u2014'; byPillar[p] = (byPillar[p]||0) + 1; });
+  const breakdownHtml = Object.entries(byPillar).sort((a,b)=>b[1]-a[1]).map(([p,c])=>{
+    const col = PGROUP_COLORS[p] || '#64748b';
+    return `<span style="background:${col}1c;color:${col};">${esc(p)}: ${c}</span>`;
+  }).join('');
+
+  // Sort matched rows by indicator code, ascending — consistent with the main table's
+  // default ordering and with naturalCodeSort used everywhere else in the app.
+  const sorted = matched.slice().sort(naturalCodeSort);
+
+  const rowsHtml = sorted.length ? sorted.map(i=>{
+    const min = MIN_BY_ID[i.primary_ministry];
+    const bandColor = scoreColor(i.score_band);
+    const pc = PGROUP_COLORS[i.gtci_pillar_group] || '#64748b';
+    return `<div class="kpi-mini-row" onclick="jumpToIndicator('${i.code}')">
+      <span class="row-code">${esc(i.code)}</span>${newBadge(i.code)}
+      <span class="kmr-name">${esc(i.name)}</span>
+      <span class="pillar-pill kmr-pillar" style="background:${pc}1c;color:${pc};">${esc(i.gtci_pillar_group||'—')}</span>
+      ${min?`<span class="min-pill" style="background:${min.color}1c;color:${min.color};font-size:9px;">${esc(min.short||min.id)}</span>`:''}
+      <span class="kmr-stat" style="color:${bandColor}">${def.stat(i)}</span>
+      <span class="kmr-arrow">↗</span>
+    </div>`;
+  }).join('') : `<div class="kpi-modal-empty">No indicators currently fall into this category.</div>`;
+
+  box.innerHTML = `
+    <div class="kpi-modal-head">
+      <button class="kpi-modal-close" onclick="closeKpiModal()">✕</button>
+      <div class="kv-big" style="color:${def.c}">${def.v}</div>
+      <div class="kl-big">${esc(def.l)}</div>
+      <div class="kdesc">${def.desc}</div>
+      ${breakdownHtml?`<div class="kpi-modal-breakdown">${breakdownHtml}</div>`:''}
+    </div>
+    <div class="kpi-modal-body">${rowsHtml}</div>
+    <div class="kpi-modal-foot">
+      <span class="kmf-hint">Click any row to jump straight to it in the full table below</span>
+      ${matched.length && def.id!=='total' ? `<button class="btn btn-primary" onclick="filterToKpi(${idx})">Filter table to these ${matched.length}</button>` : ''}
+    </div>`;
+
+  // "Exploded view": the modal grows out from wherever the scorecard was clicked
+  if(ev && ev.currentTarget){
+    const rect = ev.currentTarget.getBoundingClientRect();
+    box.style.transformOrigin = (rect.left + rect.width/2) + 'px ' + (rect.top + rect.height/2) + 'px';
+  }
+
+  overlay.classList.add('open');
+  document.addEventListener('keydown', kpiEscHandler);
+}
+
+function closeKpiModal(){
+  document.getElementById('kpi-modal-overlay').classList.remove('open');
+  document.removeEventListener('keydown', kpiEscHandler);
+}
+
+function kpiEscHandler(e){ if(e.key==='Escape') closeKpiModal(); }
+
+function jumpToIndicator(code){
+  closeKpiModal();
+  resetFilters();
+  const cid = code.replace(/\./g,'_');
+  const row = document.getElementById('row-'+cid);
+  if(!row) return;
+  row.scrollIntoView({behavior:'smooth', block:'center'});
+  row.classList.add('flash-highlight');
+  setTimeout(()=>row.classList.remove('flash-highlight'), 1800);
+  if(expandedCode !== cid) toggleDetail(cid);
+}
+
+function filterToKpi(idx){
+  const def = KPI_DEFS[idx];
+  closeKpiModal();
+  resetFilters();
+  if(def.filterKey){
+    if(def.filterKey.startsWith('srcgroup:')){
+      const gid = def.filterKey.split(':')[1];
+      filters.srcgroup.add(gid);
+      const btn = document.querySelector(`#f-srcgroup [data-gid="${gid}"]`);
+      if(btn) btn.classList.add('active');
+    } else {
+      filters.quick.add(def.filterKey);
+    }
+    document.getElementById('filter-panel').classList.add('open');
+    document.getElementById('adv-chevron').textContent = '▲';
+    applyAndRender();
+  }
+  window.scrollTo({top: document.querySelector('.toolbar').offsetTop - 10, behavior:'smooth'});
+}
+
+/* ============================================================
+   FILTER STATE HANDLERS
+   ============================================================ */
+let searchRegexes = [];
+
+// Builds one word-start-anchored regex per search token. Anchoring each token to the
+// start of a "word" (start of string, or right after a non-alphanumeric character)
+// means "gov" matches "Government" but a query like "cience" won't spuriously match
+// inside "science" — tightens accuracy while still allowing partial/prefix typing.
+function buildSearchRegexes(query){
+  const q = (query||'').trim().toLowerCase();
+  if(!q) return [];
+  const tokens = q.split(/\s+/).filter(Boolean);
+  return tokens.map(t=>{
+    const escaped = t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); // escape regex metachars (e.g. the "." in "6.2.3")
+    return new RegExp('(^|[^a-z0-9])'+escaped);
+  });
+}
+
+// All tokens must match (AND across words) — e.g. "moe quick win" only matches indicators
+// whose haystack contains all three word-starts, in any order/location.
+function matchesSearch(haystack){
+  return searchRegexes.every(r=>r.test(haystack));
+}
+
+function onSearch(v){
+  filters.search = v.trim().toLowerCase();
+  searchRegexes = buildSearchRegexes(filters.search);
+  applyAndRender();
+}
+
+function toggleMulti(cat, val, btn){
+  const set = filters[cat];
+  if(set.has(val)) set.delete(val); else set.add(val);
+  btn.classList.toggle('active');
+  applyAndRender();
+}
+
+function setGap(val, btn){
+  filters.gap = val;
+  btn.parentElement.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyAndRender();
+}
+
+function renderFilterPanel(){ /* buttons already built in renderShell(); nothing extra needed */ }
+
+function resetFilters(){
+  filters.search=''; searchRegexes=[]; filters.quick.clear(); filters.pillar.clear();
+  filters.ministry.clear(); filters.srcgroup.clear(); filters.agency.clear();
+  filters.gap='all';
+  document.getElementById('search-input').value='';
+  document.querySelectorAll('.f-btn.active').forEach(b=>b.classList.remove('active'));
+  const allGapBtn = document.querySelector('#f-gap .f-btn');
+  if(allGapBtn) allGapBtn.classList.add('active');
+  applyAndRender();
+}
+
+function sortBy(col){
+  if(sortCol===col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = (col==='name'||col==='code'); }
+  applyAndRender();
+}
+
+/* ============================================================
+   FILTER LOGIC
+   ============================================================ */
+function matchesQuick(i, key){
+  switch(key){
+    case 'quickwin': return !!i.quick_win;
+    case 'crosscut': return !!i.cross_cutting;
+    case 'gap23': return !!i.zero_fix_notes;
+    case 'nodata': return i.score_band==='NO_DATA';
+    case 'beatssg': return num(i.gap)!==null && num(i.gap)>0;
+    case 'critical100': return num(i.bn_rank)!==null && num(i.bn_rank)>=100;
+    case 'excellent': return i.score_band==='EXCELLENT';
+    case 'zeroscore': return ZERO_SCORE_CODES.includes(i.code);
+    default: return true;
+  }
+}
+
+function getFiltered(){
+  let data = INDICATORS;
+
+  for(const key of filters.quick){ data = data.filter(i=>matchesQuick(i,key)); }
+
+  if(filters.pillar.size) data = data.filter(i=>filters.pillar.has(i.gtci_pillar_group));
+  if(filters.srcgroup.size) data = data.filter(i=>filters.srcgroup.has(i.src_group_id));
+  if(filters.agency.size) data = data.filter(i=>filters.agency.has(i.submission_agency));
+  if(filters.ministry.size) data = data.filter(i=>{
+    if(filters.ministry.has(i.primary_ministry)) return true;
+    return (i.secondary_ministries||[]).some(m=>filters.ministry.has(m));
+  });
+
+  if(filters.gap==='beats') data = data.filter(i=>num(i.gap)!==null && num(i.gap)>0);
+  else if(filters.gap==='small') data = data.filter(i=>num(i.gap)!==null && num(i.gap)>=-10 && num(i.gap)<0);
+  else if(filters.gap==='moderate') data = data.filter(i=>num(i.gap)!==null && num(i.gap)>=-30 && num(i.gap)<-10);
+  else if(filters.gap==='large') data = data.filter(i=>num(i.gap)!==null && num(i.gap)<-30);
+
+  if(filters.search){
+    data = data.filter(i => matchesSearch(i._haystack));
+  }
+
+  data = data.slice().sort((a,b)=>{
+    if(sortCol==='code'){
+      const cmp = naturalCodeSort(a,b);
+      return sortAsc ? cmp : -cmp;
+    }
+    let av = sortCol==='name' ? (a[sortCol]||'') : num(a[sortCol]);
+    let bv = sortCol==='name' ? (b[sortCol]||'') : num(b[sortCol]);
+    if(av===null||av===undefined) av = sortAsc ? Infinity : -Infinity;
+    if(bv===null||bv===undefined) bv = sortAsc ? Infinity : -Infinity;
+    if(av>bv) return sortAsc?1:-1;
+    if(av<bv) return sortAsc?-1:1;
+    return 0;
+  });
+
+  return data;
+}
+
+function applyAndRender(){
+  const data = getFiltered();
+  document.getElementById('rb-count').textContent = data.length;
+  renderTable(data);
+}
+
+/* ============================================================
+   RENDER: TABLE ROWS + DETAIL PANEL
+   ============================================================ */
+function renderTable(data){
+  const tbody = document.getElementById('ind-tbody');
+  if(!data.length){
+    tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state">No indicators match the current filters. Try clearing a filter or search term.</div></td></tr>`;
+    return;
+  }
+
+  let html = '';
+  let lastSubpillar = null;
+  const showSubpillarHeaders = (sortCol === 'code');
+  data.forEach(i=>{
+    const cid = i.code.replace(/\./g,'_');
+    const min = MIN_BY_ID[i.primary_ministry];
+    const pc = PGROUP_COLORS[i.gtci_pillar_group] || '#64748b';
+    const bandColor = scoreColor(i.score_band);
+    const gc = gapClass(i.gap);
+
+    if(showSubpillarHeaders){
+      const sp = i.code.split('.').slice(0,2).join('.');
+      if(sp !== lastSubpillar){
+        lastSubpillar = sp;
+        const spData = SUBPILLAR_DATA[sp];
+        if(spData){
+          const spColor = scoreColor(bandFromScore(spData.score));
+          html += `<tr class="subpillar-row">
+            <td><span class="row-code sp-code">${esc(sp)}</span></td>
+            <td colspan="3"><div class="row-name sp-name">${esc(spData.name)}</div></td>
+            <td><span class="score" style="color:${spColor}">${fmt2(spData.score)}</span></td>
+            <td><span class="score" style="color:${spColor}">#${spData.rank}</span></td>
+            <td colspan="5"></td>
+          </tr>`;
+        }
+      }
+    }
+
+    // Indicator name is locked to JSON-only editing — never rendered as editable in the web UI,
+    // regardless of edit mode, to prevent accidental drift from the source-of-truth taxonomy.
+    const nameCell = `<div class="row-name">${esc(i.name)}</div>`;
+
+    const ministryCell = editMode
+      ? `<select class="edit-select" data-code="${cid}" data-field="primary_ministry" onclick="event.stopPropagation()" onchange="commitFieldFromEl(this)">
+          <option value="">—</option>
+          ${(MASTER.ministries||[]).map(m=>`<option value="${esc(m.id)}" ${i.primary_ministry===m.id?'selected':''}>${esc(m.short||m.id)}</option>`).join('')}
+        </select>`
+      : (min ? `<span class="min-pill" style="background:${min.color}1c;color:${min.color};">${esc(min.short||min.id)}</span>` : (i.primary_ministry||'—'));
+
+    // bn_score and bn_rank are locked to JSON-only editing (official GTCI figures) — never
+    // editable through the web UI even in edit mode. Other numeric fields (sg_score, sg_rank,
+    // gap) still go through the normal editable path.
+    const LOCKED_FIELDS = ['bn_score','bn_rank'];
+    const numCell = (field, display, color) => (editMode && !LOCKED_FIELDS.includes(field))
+      ? `<span data-editable="1" contenteditable="true" data-code="${cid}" data-field="${field}" data-number="1"
+          style="${color?'color:'+color+';':''}" onclick="event.stopPropagation()" onblur="commitFieldFromEl(this)">${esc(isNA(i[field])?'':i[field])}</span>`
+      : `<span class="score" style="${color?'color:'+color+';':''}" ${(editMode && LOCKED_FIELDS.includes(field))?'title="Locked — edit via JSON file only"':''}>${display}</span>`;
+
+    const flagsCell = editMode
+      ? `<label style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;margin-right:6px;" onclick="event.stopPropagation()">
+          <input type="checkbox" data-code="${cid}" data-field="quick_win" data-bool="1" onchange="commitFieldFromEl(this)" ${i.quick_win?'checked':''}> QW</label>
+        <label style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;" onclick="event.stopPropagation()">
+          <input type="checkbox" data-code="${cid}" data-field="cross_cutting" data-bool="1" onchange="commitFieldFromEl(this)" ${i.cross_cutting?'checked':''}> CC</label>`
+      : `${i.quick_win?'<span class="flag-badge flag-qw">QW</span>':''}${i.cross_cutting?'<span class="flag-badge flag-cc">CC</span>':''}`;
+
+    html += `<tr class="data-row" id="row-${cid}" onclick="toggleDetail('${cid}')">
+      <td data-label="Code"><span class="row-code">${esc(i.code)}</span>${newBadge(i.code)}</td>
+      <td data-label="Indicator">${nameCell}</td>
+      <td data-label="Pillar"><span class="pillar-pill" style="background:${pc}1c;color:${pc};">${esc(i.gtci_pillar_group||'—')}</span></td>
+      <td data-label="Ministry">${ministryCell}</td>
+      <td data-label="BN Score">${numCell('bn_score', fmt2(i.bn_score), bandColor)}</td>
+      <td data-label="BN Rank">${numCell('bn_rank', fmtInt(i.bn_rank)!=='—'?'#'+fmtInt(i.bn_rank):'—', bandColor)}</td>
+      <td data-label="SG Score">${numCell('sg_score', fmt2(i.sg_score), '#0369a1')}</td>
+      <td data-label="SG Rank">${numCell('sg_rank', fmtInt(i.sg_rank)!=='—'?'#'+fmtInt(i.sg_rank):'—', null)}</td>
+      <td data-label="Gap">${editMode ? numCell('gap', fmtGap(i.gap), null) : `<span class="${gc}">${fmtGap(i.gap)}</span>`}</td>
+      <td data-label="Flags">${flagsCell}</td>
+      <td class="row-actions-cell">
+        <button class="screenshot-btn" id="shot-${cid}" title="Screenshot this indicator" onclick="event.stopPropagation();screenshotIndicator('${cid}')">📷</button><span class="expand-ico" id="ico-${cid}">▼</span>
+      </td>
+    </tr>
+    <tr class="detail-row" id="detail-${cid}" style="display:none;"><td colspan="11">${buildDetailPanel(i)}</td></tr>`;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function toggleDetail(cid){
+  const row = document.getElementById('detail-'+cid);
+  const ico = document.getElementById('ico-'+cid);
+  if(!row) return;
+  const showing = row.style.display !== 'none';
+  if(expandedCode && expandedCode!==cid){
+    const prev = document.getElementById('detail-'+expandedCode);
+    const prevIco = document.getElementById('ico-'+expandedCode);
+    if(prev) prev.style.display='none';
+    if(prevIco) prevIco.textContent='▼';
+  }
+  row.style.display = showing ? 'none' : '';
+  if(ico) ico.textContent = showing ? '▼' : '▲';
+  expandedCode = showing ? null : cid;
+}
+
+function dtxt(cid, path, val, extraAttrs){
+  extraAttrs = extraAttrs || '';
+  if(editMode){
+    return `<div class="d-txt" data-editable="1" contenteditable="true" data-code="${cid}" data-field="${path}"
+      onclick="event.stopPropagation()" onblur="commitFieldFromEl(this)" ${extraAttrs}>${esc(val)}</div>`;
+  }
+  return `<div class="d-txt" ${extraAttrs}>${esc(val)}</div>`;
+}
+
+function buildDetailPanel(i){
+  const cid = i.code.replace(/\./g,'_');
+  const min = MIN_BY_ID[i.primary_ministry];
+  const sg = SRC_BY_ID[i.src_group_id];
+  const sgn = i.source_group_notes || {};
+  const rn = i.review_notes || {};
+  const moe = i.moe_notes;
+  const zf = i.zero_fix_notes;
+  const sviews = i.sector_views || [];
+
+  const secMinistries = (i.secondary_ministries||[]).map(id=>{
+    const m = MIN_BY_ID[id];
+    return m ? `<span class="min-pill" style="background:${m.color}1c;color:${m.color};margin-right:4px;">${esc(m.short||id)}</span>` : esc(id);
+  }).join('');
+
+  let html = `<div class="detail-panel">`;
+
+  if(i.definition){
+    html += `<div class="d-box"><div class="d-lbl" style="color:#475569;">Indicator Definition
+      <button class="copy-btn" onclick="event.stopPropagation();copyText(this,${JSON.stringify(i.definition)})">⎘ Copy</button></div>
+      ${dtxt(cid,'definition',i.definition,'style="font-style:italic;"')}</div>`;
+  }
+
+  html += `<div class="d-sec">
+    <div class="d-lbl">Pillar / Sub-Pillar</div>${dtxt(cid,'pillar',i.pillar||'—')}
+    <div class="d-lbl" style="margin-top:10px;">Data Year</div>${dtxt(cid, i.data_year!=null ? 'data_year' : 'review_notes.data_period', i.data_year || rn.data_period || '—')}
+    <div class="d-lbl" style="margin-top:10px;">Source</div>
+    <div class="d-txt">${dtxt(cid,'source_name',i.source_name||'—')}${i.gtci_source?` <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:#0369a11c;color:#0369a1;margin-left:2px;">${esc(i.gtci_source)}</span>`:''}
+      ${(i.source_url && i.source_url!=='NA') || editMode ? `<br>${editMode ? dtxt(cid,'source_url',i.source_url||'','style="color:var(--primary);font-size:11px;"') : `<a href="${esc(i.source_url)}" target="_blank" rel="noopener" style="color:var(--primary);font-size:11px;">${esc(i.source_url)}</a>`}` : ''}</div>
+    <div class="d-lbl" style="margin-top:10px;">Brunei Score in Source</div>${dtxt(cid,'review_notes.source_score',rn.source_score||'—')}
+  </div>`;
+
+  html += `<div class="d-sec">
+    <div class="d-lbl">Primary Ministry</div>
+    ${editMode ? `<select data-editable="1" data-code="${cid}" data-field="primary_ministry" onchange="commitFieldFromEl(this)" onclick="event.stopPropagation()" style="font-size:11.5px;padding:4px 8px;border-radius:6px;border:1px dashed #f59e0b;background:#fffbeb;">
+        ${(MASTER.ministries||[]).map(m=>`<option value="${esc(m.id)}" ${i.primary_ministry===m.id?'selected':''}>${esc(m.name)}</option>`).join('')}
+      </select>`
+      : `<div class="d-txt">${min?`<span class="min-pill" style="background:${min.color}1c;color:${min.color};">${esc(min.name)}</span>`:esc(i.csv_ministry_full||'—')}</div>`}
+    <div class="d-lbl" style="margin-top:8px;">Secondary Ministries ${editMode?'<span style="font-weight:400;text-transform:none;">(same ministry list as Primary — Ctrl/Cmd-click to select multiple)</span>':''}</div>
+    ${editMode
+      ? `<select multiple data-code="${cid}" data-field="secondary_ministries" onchange="commitSecondaryMinistries(this)" onclick="event.stopPropagation()"
+          style="font-size:11.5px;padding:4px 8px;border-radius:6px;border:1px dashed #f59e0b;background:#fffbeb;min-height:${Math.min(140, 26+((MASTER.ministries||[]).length-1)*20)}px;width:100%;max-width:320px;">
+          ${(MASTER.ministries||[]).filter(m=>m.id!==i.primary_ministry).map(m=>`<option value="${esc(m.id)}" ${(i.secondary_ministries||[]).includes(m.id)?'selected':''}>${esc(m.name)}</option>`).join('')}
+        </select>`
+      : (secMinistries?`<div class="d-txt">${secMinistries}</div>`:'')}
+    <div class="d-lbl" style="margin-top:8px;">Submission Agency</div>${dtxt(cid,'submission_agency',i.submission_agency||'—')}
+    ${(i.quick_win||i.cross_cutting)?`<div style="margin-top:8px;">${i.quick_win?'<span class="flag-badge flag-qw">Quick Win</span>':''}${i.cross_cutting?'<span class="flag-badge flag-cc">Cross-Cutting</span>':''}</div>`:''}
+    <div class="d-lbl" style="margin-top:8px;">Brunei-Specific Comments
+      <button class="copy-btn" onclick="event.stopPropagation();copyText(this,${JSON.stringify(i.brunei_comment||i.brunei_challenge||'')})">⎘ Copy</button></div>
+    ${dtxt(cid, i.brunei_comment!=null ? 'brunei_comment' : 'brunei_challenge', i.brunei_comment || i.brunei_challenge || '—')}
+    ${(rn.insights||editMode)?`<div class="d-lbl" style="margin-top:8px;">Insights &amp; Remarks
+      ${rn.insights?`<button class="copy-btn" onclick="event.stopPropagation();copyText(this,${JSON.stringify(rn.insights)})">⎘ Copy</button>`:''}</div>${dtxt(cid,'review_notes.insights',rn.insights||'')}`:''}
+  </div>`;
+
+  if(i.how_to_improve_score || i.how_to_improve_reporting || editMode){
+    html += `<div class="d-box"><div class="d-lbl" style="color:#0369a1;">How To Improve
+      <button class="copy-btn" onclick="event.stopPropagation();copyText(this,${JSON.stringify((i.how_to_improve_score||'')+' '+(i.how_to_improve_reporting||''))})">⎘ Copy</button></div>
+      ${(i.how_to_improve_score||editMode)?`<div class="d-txt" style="margin-top:6px;"><b>Score:</b> ${dtxt(cid,'how_to_improve_score',i.how_to_improve_score||'')}</div>`:''}
+      ${(i.how_to_improve_reporting||editMode)?`<div class="d-txt" style="margin-top:6px;"><b>Reporting:</b> ${dtxt(cid,'how_to_improve_reporting',i.how_to_improve_reporting||'')}</div>`:''}</div>`;
+  }
+
+  if(sgn.action || sgn.provider || sgn.mechanism || i.submission_notes || editMode){
+    html += `<div class="d-box"><div class="d-lbl" style="color:#0369a1;">Source Group ${sg?esc(sg.label):''} — Submission Mechanics
+      <button class="copy-btn" onclick="event.stopPropagation();copyText(this,${JSON.stringify(sgn.action||i.submission_notes||'')})">⎘ Copy</button></div>
+      ${(sgn.provider||editMode)?`<div class="d-txt" style="margin-top:6px;"><b>Provider:</b> ${dtxt(cid,'source_group_notes.provider',sgn.provider||'')}</div>`:''}
+      ${(sgn.mechanism||editMode)?`<div class="d-txt" style="margin-top:4px;"><b>Mechanism:</b> ${dtxt(cid,'source_group_notes.mechanism',sgn.mechanism||'')}</div>`:''}
+      ${(sgn.agency||editMode)?`<div class="d-txt" style="margin-top:4px;"><b>Agency:</b> ${dtxt(cid,'source_group_notes.agency',sgn.agency||'')}</div>`:''}
+      ${(sgn.action||editMode)?`<div class="d-txt" style="margin-top:4px;"><b>Recommended Action:</b> ${dtxt(cid,'source_group_notes.action',sgn.action||'')}</div>`:''}
+      ${(i.submission_notes||editMode)?`<div class="d-txt" style="margin-top:4px;">${dtxt(cid,'submission_notes',i.submission_notes||'')}</div>`:''}</div>`;
+  }
+
+  if(rn.analysis || editMode){
+    html += `<div class="d-box"><div class="d-lbl" style="color:#0369a1;">Detailed Source Performance Analysis
+      <button class="copy-btn" onclick="event.stopPropagation();copyText(this,${JSON.stringify(rn.analysis||'')})">⎘ Copy</button></div>
+      <div class="d-txt" style="margin-top:6px;">${dtxt(cid,'review_notes.analysis',rn.analysis||'')}</div>
+      ${(rn.trend||editMode)?`<div class="d-txt" style="margin-top:6px;"><b>Trend:</b> ${dtxt(cid,'review_notes.trend',rn.trend||'')}</div>`:''}</div>`;
+  }
+
+  if(sviews.length){
+    html += `<div class="d-box sector"><div class="d-lbl" style="color:#7c3aed;">Priority-Sector Relevance (${sviews.length})</div>`;
+    sviews.forEach((sv,idx)=>{
+      const s = SECTOR_BY_ID[String(sv.sector_id)];
+      const col = SECTOR_PALETTE[((sv.sector_id||1)-1)%SECTOR_PALETTE.length];
+      html += `<div style="margin-top:10px;">
+        <span class="sector-chip" style="background:${col};">${s?esc(sectorShortTitle(s.title)):('Sector '+sv.sector_id)}</span>
+        ${(sv.why_relevant||editMode)?dtxt(cid,`sector_views.${idx}.why_relevant`,sv.why_relevant||'','style="margin-top:4px;"'):''}
+        ${(sv.suggested_policy||editMode)?`<div class="d-txt" style="margin-top:4px;"><b>Suggested Policy:</b> ${dtxt(cid,`sector_views.${idx}.suggested_policy`,sv.suggested_policy||'')}</div>`:''}
+        ${(sv.timeline||editMode)?`<div class="d-txt" style="margin-top:2px;"><b>Timeline:</b> ${dtxt(cid,`sector_views.${idx}.timeline`,sv.timeline||'')}</div>`:''}
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if(moe){
+    html += `<div class="d-box moe"><div class="d-lbl" style="color:#0891b2;">MOE Playbook Notes
+      <button class="copy-btn" onclick="event.stopPropagation();copyText(this,${JSON.stringify(moe.action_plan||moe.current_status||'')})">⎘ Copy</button></div>
+      ${(moe.current_status||editMode)?`<div class="d-txt" style="margin-top:6px;"><b>Current Status:</b> ${dtxt(cid,'moe_notes.current_status',moe.current_status||'')}</div>`:''}
+      ${(moe.action_plan||editMode)?`<div class="d-txt" style="margin-top:6px;"><b>Action Plan:</b> ${dtxt(cid,'moe_notes.action_plan',moe.action_plan||'')}</div>`:''}
+      ${(moe.kpi||editMode)?`<div class="d-txt" style="margin-top:6px;"><b>KPI:</b> ${dtxt(cid,'moe_notes.kpi',moe.kpi||'')}</div>`:''}
+      ${(moe.policy_rec||editMode)?`<div class="d-txt" style="margin-top:6px;"><b>Policy Recommendation:</b> ${dtxt(cid,'moe_notes.policy_rec',moe.policy_rec||'')}</div>`:''}</div>`;
+  }
+
+  if(zf){
+    const pcolor = (zf.priority||'').includes('CRITICAL') ? '#dc2626' : (zf.priority||'').includes('HIGH') ? '#ea580c' : '#ca8a04';
+    html += `<div class="d-box warn"><div class="d-lbl" style="color:#dc2626;">Data Gap / Near-Zero Fix Notes
+      <button class="copy-btn" onclick="event.stopPropagation();copyText(this,${JSON.stringify(zf.fix_desc||'')})">⎘ Copy</button></div>
+      <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="band-badge" style="background:${pcolor}1c;color:${pcolor};">${esc(zf.priority||'—')}</span>
+        <span class="band-badge" style="background:#0369a11c;color:#0369a1;">${esc((zf.fix_type||'').replace('_',' '))}</span>
+        ${zf.est_gain?`<span class="band-badge" style="background:#16a34a1c;color:#16a34a;">${esc(zf.est_gain)}</span>`:''}
+      </div>
+      ${(zf.fix_category||editMode)?`<div class="d-txt" style="margin-top:8px;"><b>Category:</b> ${dtxt(cid,'zero_fix_notes.fix_category',zf.fix_category||'')}</div>`:''}
+      ${(zf.data_exists||editMode)?`<div class="d-txt" style="margin-top:4px;"><b>Data Exists?</b> ${dtxt(cid,'zero_fix_notes.data_exists',zf.data_exists||'')}</div>`:''}
+      ${(zf.fix_desc||editMode)?`<div class="d-txt" style="margin-top:6px;">${dtxt(cid,'zero_fix_notes.fix_desc',zf.fix_desc||'')}</div>`:''}
+      ${(zf.timeline||editMode)?`<div class="d-txt" style="margin-top:6px;"><b>Timeline:</b> ${dtxt(cid,'zero_fix_notes.timeline',zf.timeline||'')}</div>`:''}</div>`;
+  }
+
+  if(editMode){
+    html += `<div class="d-box" style="border-left-color:#7c3aed;">
+      <div class="edit-json-toggle" onclick="event.stopPropagation();toggleRawJson('${cid}')">🧬 Edit Full Record JSON (advanced — add/remove any field)</div>
+      <div class="raw-json-box" id="rawjson-${cid}" onclick="event.stopPropagation()">
+        <textarea spellcheck="false"></textarea>
+        <div class="raw-json-actions">
+          <button class="btn btn-primary" onclick="applyRawJson('${cid}')">Apply JSON to this indicator</button>
+          <button class="btn" onclick="toggleRawJson('${cid}')">Close</button>
+        </div>
+        <div class="raw-json-msg"></div>
+      </div>
+    </div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+/* ============================================================
+   EXPORT CSV (currently filtered set)
+   ============================================================ */
+function exportCSV(){
+  const data = getFiltered();
+  const cols = ['code','name','pillar','gtci_pillar_group','primary_ministry','submission_agency','bn_score','bn_rank','sg_score','sg_rank','gap','score_band','gtci_source','quick_win','cross_cutting'];
+  const rows = [cols.join(',')];
+  data.forEach(i=>{
+    rows.push(cols.map(c=>{
+      let v = i[c];
+      if(v===null||v===undefined||v==='NA') v='';
+      v = String(v).replace(/"/g,'""');
+      return /[,"\n]/.test(v) ? `"${v}"` : v;
+    }).join(','));
+  });
+  const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'gtci_2025_filtered_indicators.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+// loadData() is now triggered by firebaseAuth.onAuthStateChanged once a user is signed in (see above).
+</script>
+</body>
+</html>
