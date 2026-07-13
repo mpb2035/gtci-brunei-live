@@ -312,9 +312,43 @@ footer.page-footer{ background:var(--surface-soft); padding:48px 0; text-align:c
 footer.page-footer .mtn{ font-size:11px; color:var(--muted-soft); margin-top:8px; }
 
 .empty-note{ color:var(--muted); font-size:14px; padding:24px; text-align:center; }
+
+/* ── Mandatory login gate (blocks all content pre-auth) ───────── */
+#loginGate{
+  position:fixed; inset:0; background:var(--surface-dark); z-index:2000;
+  display:flex; align-items:center; justify-content:center; padding:24px;
+}
+#loginGate.hidden{ display:none; }
+.login-card{
+  background:var(--canvas); border-radius:var(--r-xl); max-width:400px; width:100%; padding:36px 32px;
+  box-shadow:0 24px 64px rgba(0,0,0,.4);
+}
+.login-card h2{ font-size:21px; font-weight:600; color:var(--ink); }
+.login-card .sub{ color:var(--muted); font-size:13.5px; margin-top:6px; line-height:1.5; }
+#appShell{ display:none; }
+#appShell.visible{ display:block; }
 </style>
 </head>
 <body>
+
+<div id="loginGate">
+  <div class="login-card">
+    <h2>Manpower AKPI Dashboard</h2>
+    <div class="sub">Sign in with your approved email and password to view live AKPI data. Nothing is shown until you're authenticated.</div>
+    <div class="auth-field" style="margin-top:22px;">
+      <label>Email</label>
+      <input type="email" id="gateEmail" autocomplete="username">
+    </div>
+    <div class="auth-field">
+      <label>Password</label>
+      <input type="password" id="gatePassword" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" id="gateEmailBtn" style="width:100%;justify-content:center;">Sign in</button>
+    <div class="auth-error" id="gateErrorMsg" style="display:none;"></div>
+  </div>
+</div>
+
+<div id="appShell">
 
 <nav class="top-nav">
   <div class="top-nav-inner">
@@ -459,13 +493,9 @@ footer.page-footer .mtn{ font-size:11px; color:var(--muted-soft); margin-top:8px
   <div class="modal" id="authModalContent" style="max-width:420px;">
     <button class="modal-close" id="authCloseBtn">✕</button>
     <h2 style="font-size:20px;">Sign in</h2>
-    <div class="sub">Sign in with an approved account to view live data and edit values.</div>
+    <div class="sub">Sign in with your approved email and password to view live data and edit values.</div>
 
-    <div style="margin-top:20px;">
-      <button class="btn btn-secondary" id="googleSignInBtn" style="width:100%;justify-content:center;">Sign in with Google</button>
-    </div>
-    <div class="auth-divider">or with email</div>
-    <div class="auth-field">
+    <div class="auth-field" style="margin-top:20px;">
       <label>Email</label>
       <input type="email" id="authEmail" autocomplete="username">
     </div>
@@ -481,8 +511,9 @@ footer.page-footer .mtn{ font-size:11px; color:var(--muted-soft); margin-top:8px
   </div>
 </div>
 
-<script id="akpi-raw-data" type="application/json">[{"id": "32516ca9-6b12-4913-91e7-86e1bef64b1b", "aspirasi": "Aspirasi 1", "akpi_code": "1.1", "indicator_bm": "% 5 A-C dalam PSR", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - DE\n2021 note: SAM year", "validation_note": "", "definition_bm": "Peratus pelajar yang memperolehi gred A-C dalam lima mata pelajaran peperiksaan Penilaian Sekolah Rendah", "definition_en": "Percentage of students who obtained grades A-C in five subjects in the Primary School Assessment (PSR) examination", "target_2035": 90, "sort_order": 0, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 74.1, "2020": 74.1, "2021": 75.9, "2022": 61.1, "2023": 71.6, "2024": 64.5, "2025": 64.7, "2026": null}}, {"id": "049cb582-9e18-49fb-a621-59c11ddc1967", "aspirasi": "Aspirasi 1", "akpi_code": "1.2", "indicator_bm": "% ≥ 5 kredit/jayyid GCE/IGCSE O-Level/SPUB atau sebanding", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - DE\n2021 note: SAG year", "validation_note": "", "definition_bm": "Peratus pelajar memperolehi sekurang-kurangnya 5 kredit dalam peperiksaan Brunei Cambridge GCE dan IGCSE di peringkat \"O\" atau SPUB atau sebanding", "definition_en": "Percentage of students obtaining at least 5 credits/jayyid in GCE/IGCSE O-Level/Sijil Pelajaran Ugama Brunei (SPUB) or equivalent examinations", "target_2035": 60, "sort_order": 1, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T04:07:07.51835+00", "values": {"2019": 41.1, "2020": 45.3, "2021": 56.5, "2022": 45.4, "2023": 43.8, "2024": 44.2, "2025": 44.1}}, {"id": "c9eccd10-fc23-44d6-b58e-6bbfeaa71d65", "aspirasi": "Aspirasi 1", "akpi_code": "1.3", "indicator_bm": "% Pangkat 1 dalam SSSRU", "indicator_en": "", "lead_agency": "MORA", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "", "definition_bm": "Peratus pelajar yang memperolehi Pangkat 1 dalam Sijil Sekolah-Sekolah Rendah Ugama", "definition_en": "Percentage of students who obtained Pangkat 1 in the Sijil Sekolah-Sekolah Rendah Ugama (SSSRU)", "target_2035": 73, "sort_order": 2, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 61.7, "2020": 68.1, "2021": 56.1, "2022": 52.8, "2023": 63.8, "2024": 60.55, "2025": 64.95}}, {"id": "91b17699-0c3f-48c3-ba19-600c2296f483", "aspirasi": "Aspirasi 1", "akpi_code": "1.4", "indicator_bm": "Kadar pengambilan kasar ke pendidikan tertiari", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "2025 data pending", "definition_bm": "Peratus pengambilan pelajar ke peringkat pengajian tinggi di BDQF tahap 5 dan 6", "definition_en": "Percentage of student intake into higher education at BDQF Level 5 and 6 out of the total cohort of students at the official age in Year 1, 13 years later (Gross intake rate to tertiary education)", "target_2035": 55, "sort_order": 3, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 40, "2020": 38.2, "2021": 47.7, "2022": 46.1, "2023": 53.9, "2024": 48.2}}, {"id": "bb0c08b2-f444-4174-8474-b7052e72a911", "aspirasi": "Aspirasi 1", "akpi_code": "1.5", "indicator_bm": "Kadar pengijazahan TVET atau sebanding dan ke atas", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT", "validation_note": "2025 data pending", "definition_bm": "Kadar pengijazahan graduan di peringkat kelulusan tahap BDQF 2 dan ke atas", "definition_en": "Graduation rate of graduates at BDQF qualification Level 2 and above (Graduation rate for TVET or equivalent & above)", "target_2035": 90, "sort_order": 4, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 89.8, "2020": 89.2, "2021": 91, "2022": 86.8, "2023": 89.5, "2024": 90.5}}, {"id": "8874c403-462f-44a9-bbfc-f3784a27d7f7", "aspirasi": "Aspirasi 1", "akpi_code": "1.6", "indicator_bm": "Jumlah kolaborasi antara IPT tempatan dan institusi/agensi luar negeri", "indicator_en": "", "lead_agency": "MOE", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT\n\n2024 source shows ambiguous \"284/210\"", "validation_note": "2024 value to be validated", "definition_bm": "Jumlah Memorandum Persefahaman (MOU) yang aktif di antara IPT tempatan (awam dan swasta) dengan agensi-agensi berkaitan luar negeri", "definition_en": "Number of active Memoranda of Understanding (MOU) between local Higher Education Institutions – public and private – and relevant overseas institutions/agencies", "target_2035": 261, "sort_order": 5, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-13T06:53:37.45844+00", "values": {"2020": 129, "2021": 150, "2022": 166, "2023": 174, "2025": 284}}, {"id": "c6018177-194e-4f3b-b86a-8288c0403e5e", "aspirasi": "Aspirasi 1", "akpi_code": "1.7", "indicator_bm": "% pelajar IPT tempatan dengan kemahiran dalam teknologi baharu dan kelestarian", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT\n\nCore modules to start 2026", "validation_note": "Baseline not yet available", "definition_bm": "Peratus pelajar di IPT tempatan yang telah menamatkan modul teras berkaitan teknologi baharu (emerging technologies) dan kelestarian (sustainability)", "definition_en": "Percentage of local higher education institution students who have completed core modules in emerging technologies and sustainability", "target_2035": null, "sort_order": 6, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {}}, {"id": "ef41f05a-b3d8-4663-a80e-8a9d89739f29", "aspirasi": "Aspirasi 2", "akpi_code": "2.1", "indicator_bm": "% Graduan sains & kejuruteraan BDQF Tahap 6 dan ke atas", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT", "validation_note": "2025 data pending", "definition_bm": "Peratus graduan BDQF tahap 6 ke 8 dalam bidang sains & kejuruteraan", "definition_en": "Percentage of graduates with BDQF Level 6 to 8 qualifications in the fields of science & engineering", "target_2035": 50, "sort_order": 7, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 37.4, "2020": 33.9, "2021": 35.1, "2022": 37.5, "2023": 34.5, "2024": 37.1}}, {"id": "3a476641-2dac-4ef6-b83b-a5d65fd6bada", "aspirasi": "Aspirasi 2", "akpi_code": "2.2", "indicator_bm": "Jumlah usahawan tempatan", "indicator_en": "", "lead_agency": "KTK", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "Target references sasaran EB", "validation_note": "2025 data pending", "definition_bm": "Jumlah bilangan individu tempatan yang mempunyai usaha perniagaan mereka sendiri (employers and own-account workers)", "definition_en": "Total number of local individuals who own their own business ventures (employers and own-account workers)", "target_2035": 26040, "sort_order": 8, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2021": 13791, "2022": 11994, "2023": 13000, "2024": 15400}}, {"id": "9f8971d4-8ee1-4572-a438-7a34649ba687", "aspirasi": "Aspirasi 2", "akpi_code": "2.3", "indicator_bm": "Jumlah paten diberikan", "indicator_en": "", "lead_agency": "BruIPO", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "2025 data pending", "definition_bm": "Jumlah hak eksklusif yang diberikan untuk ciptaan, yang boleh berupa produk atau proses, yang memberikan penyelesaian teknikal baru kepada sesuatu masalah", "definition_en": "Total number of exclusive rights granted for inventions – which may be products or processes – that provide new technical solutions to a problem", "target_2035": 1, "sort_order": 9, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 0, "2020": 0, "2021": 0, "2022": 0, "2023": 0, "2024": 0}}, {"id": "3cab7e49-d142-4c27-8bc1-f9568abc7541", "aspirasi": "Aspirasi 2", "akpi_code": "2.4", "indicator_bm": "Kadar kepuasan majikan", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "2020: TVET 82.4%; HE 80.3%", "validation_note": "2025 data pending; 2023 data previously noted as unavailable", "definition_bm": "Purata tahap kepuasan majikan terhadap prestasi kerja graduan daripada IPT tempatan yang telah bekerja sekurang-kurangnya 6 bulan", "definition_en": "Average level of employer satisfaction with work performance of graduates from local higher education institutions who have been employed for at least 6 months", "target_2035": 90, "sort_order": 10, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2021": 80.6, "2022": 81.2, "2023": 80.2, "2024": 77.8}}, {"id": "a6f36690-42c6-4073-a2eb-b617feb468f7", "aspirasi": "Aspirasi 2", "akpi_code": "2.5", "indicator_bm": "Kadar penyertaan latihan di kalangan umur bekerja", "indicator_en": "", "lead_agency": "KTK", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "New question added to KTK 2026", "validation_note": "No data yet", "definition_bm": "Kadar peratusan individu berumur 18-64 yang menyertai sebarang program atau aktiviti pembelajaran sepanjang hayat dalam tempoh 12 bulan yang lalu", "definition_en": "Percentage of individuals aged 18-64 who participated in any lifelong learning programme or activity in the past 12 months (Training participation rate of working-age population)", "target_2035": null, "sort_order": 11, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {}}, {"id": "deeb1a29-acfd-4ce6-bd94-a1080f455af7", "aspirasi": "Aspirasi 2", "akpi_code": "2.6", "indicator_bm": "Kadar tenaga kerja dengan kemahiran digital", "indicator_en": "", "lead_agency": "KTK", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "Target under review (Dalam penelitian)", "validation_note": "2025 data pending", "definition_bm": "Kadar peratusan tenaga kerja yang memiliki kemahiran digital penting yang diperlukan untuk pasaran kerja moden", "definition_en": "Percentage of the workforce possessing essential digital skills required for the modern labour market", "target_2035": null, "sort_order": 12, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2024": 91}}, {"id": "dabb29fa-53c0-4a7a-9122-707b452b6076", "aspirasi": "Aspirasi 2", "akpi_code": "2.7", "indicator_bm": "% sekolah yang mencapai minima Gred 3 (Aktif) dalam PSP", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "2026 will be baseline for full implementation", "validation_note": "No historical data", "definition_bm": "Peratus sekolah rendah dan menengah yang mencapai minima tahap Gred 3 (aktif) dalam Program Sahsiah Pelajar (PSP)", "definition_en": "Percentage of primary and secondary schools achieving at least Grade 3 (Active) in the Student Character Programme (PSP)", "target_2035": 100, "sort_order": 13, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {}}, {"id": "11b95b36-4adc-4fb9-9cff-fdb0777ac237", "aspirasi": "Aspirasi 2", "akpi_code": "2.8", "indicator_bm": "Jumlah insiden disiplin (buli, pergaduhan, dadah)", "indicator_en": "", "lead_agency": "MOE", "metric_type": "Bil", "direction": "≤ (Lower is better)", "review_cycle": "Annual", "source_note": "MOE Focal - TSUT PC Office", "validation_note": "No data yet", "definition_bm": "Jumlah pelajar di Institusi Pendidikan Tempatan yang mempunyai rekod disiplin dalam setahun seperti buli, pergaduhan dan penyalahgunaan dadah", "definition_en": "Total number of students in local education institutions who have discipline records in a year, including bullying, fighting and drug abuse", "target_2035": 0, "sort_order": 14, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {}}, {"id": "43c92842-0f22-4169-842c-cb7234365f1d", "aspirasi": "Aspirasi 3", "akpi_code": "3.1", "indicator_bm": "Kadar pengangguran jangka panjang", "indicator_en": "", "lead_agency": "KTK", "metric_type": "%", "direction": "≤ (Lower is better)", "review_cycle": "Annual", "source_note": "Target ≤ 2.0%", "validation_note": "2025 data pending", "definition_bm": "Peratusan tenaga kerja yang sedang mencari kerja dan menganggur lebih daripada setahun", "definition_en": "Percentage of the labour force who are actively seeking work and have been unemployed for more than one year (Long-term unemployment rate)", "target_2035": 2, "sort_order": 15, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 4.4, "2020": 3.4, "2021": 2.8, "2022": 2.4, "2023": 2.7, "2024": 2.7}}, {"id": "21440d55-4979-40f1-84dc-b4bb4e9ecf0a", "aspirasi": "Aspirasi 3", "akpi_code": "3.2", "indicator_bm": "Kadar pekerjaan golongan rentan warga tempatan", "indicator_en": "", "lead_agency": "PPTM", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "2024 and 2025 validated from detailed calculation slide", "validation_note": "Target under review (Dalam penelitian)", "definition_bm": "Peratusan golongan rentan tempatan yang bekerja atau bekerja sendiri yang disahkan (verified) mengikut definisi TAP", "definition_en": "Percentage of verified local vulnerable groups who are employed or self-employed as per TAP definition", "target_2035": null, "sort_order": 16, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2023": 27, "2024": 38}}, {"id": "ae74849e-3c30-454e-99d6-b306bc4e0a7d", "aspirasi": "Aspirasi 3", "akpi_code": "3.3", "indicator_bm": "Jumlah individu bekerja sendiri mencarum SPK secara sukarela", "indicator_en": "", "lead_agency": "TAP", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "Target = sekurang-kurangnya 3,000", "validation_note": "", "definition_bm": "Jumlah individu yang bekerja sendiri tanpa mempunyai majikan atau pekerja dibawahnya, yang mencarum secara sukarela ke dalam SPK (verified and non-verified) mengikut definisi TAP", "definition_en": "Total number of self-employed individuals without an employer or employees under them who voluntarily contribute into SPK, whether verified or otherwise, as defined by TAP", "target_2035": 3000, "sort_order": 17, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 1055, "2020": 1102, "2021": 991, "2022": 858, "2023": 879, "2024": 475, "2025": 407}}, {"id": "4e5d2e65-79a0-46a7-993e-f5a1cdc4b19e", "aspirasi": "Aspirasi 3", "akpi_code": "3.4", "indicator_bm": "Kadar kebolehkerjaan graduan", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT", "validation_note": "2025 data pending", "definition_bm": "Peratus graduan yang mendapat pekerjaan enam (6) bulan selepas tamat pengajian/majlis konvokesyen daripada IPT tempatan awam dan swasta", "definition_en": "Percentage of graduates who obtained employment six months after completing their studies/convocation from local public and private higher education institutions (Graduate employment rate)", "target_2035": 80, "sort_order": 18, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 58.1, "2020": 67.7, "2021": 67.8, "2022": 76, "2023": 63.6, "2024": 61}}, {"id": "86eb44d5-4fd3-41b0-80ef-91322f52da15", "aspirasi": "Aspirasi 3", "akpi_code": "3.5", "indicator_bm": "Jumlah pekerja tempatan dalam jawatan PMET di sektor swasta", "indicator_en": "", "lead_agency": "KTK", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "Target references sasaran EB", "validation_note": "2025 data pending", "definition_bm": "Pekerja tempatan yang menjawat jawatan PMET (profesional, pengurusan, eksekutif dan teknikal) mengikut ISCO-08 dan BDSOC di sektor swasta", "definition_en": "Number of local workers holding PMET positions in accordance with ISCO-08 and BDSOC in the private sector", "target_2035": 65100, "sort_order": 19, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 27532, "2020": 29323, "2021": 30167, "2022": 33976, "2023": 35900, "2024": 38500}}, {"id": "872f61ca-3ed3-475f-8f27-b8e5931ead8a", "aspirasi": "Aspirasi 3", "akpi_code": "3.6", "indicator_bm": "% belia umur 15–24 dikategorikan sebagai NEET", "indicator_en": "", "lead_agency": "JPES", "metric_type": "%", "direction": "≤ (Lower is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "2025 data pending", "definition_bm": "NEET merujuk kepada golongan belia umur 15-24 tahun yang tidak mengikuti sebarang pendidikan formal, tidak mempunyai pekerjaan, dan tidak menjalani latihan kemahiran", "definition_en": "NEET refers to youth aged 15 to 24 years who are not in any formal education, do not have employment, and are not undergoing skills training or vocational training at a given time", "target_2035": 15, "sort_order": 20, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 20.1, "2020": 21.2, "2021": 18.7, "2022": 20, "2023": 16.5, "2024": 19}}, {"id": "c00153e8-b5b3-4879-a142-70d1a742d3ce", "aspirasi": "Aspirasi 4", "akpi_code": "4.1", "indicator_bm": "Kadar perbelanjaan IPT tempatan bagi kegiatan penyelidikan", "indicator_en": "", "lead_agency": "MOE / MORA", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Focal - SUTHE Office\n\nAt TK2025/26, 2.7% = $3.3 juta", "validation_note": "", "definition_bm": "Peratus peruntukan bagi kegiatan penyelidikan di IPTA tempatan (di bawah kawalan MOE dan MORA) daripada keseluruhan peruntukan (Gaji Kakitangan + Perbelanjaan Berulang-ulang)", "definition_en": "Percentage of allocation for research activities at local public higher education institutions (IPTA under MOE and MORA) out of total allocation (Staff Salaries + Recurring Expenditure)", "target_2035": 5, "sort_order": 21, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 0.4, "2020": 0.5, "2021": 0.6, "2022": 1.3, "2023": 1.5, "2024": 1.9, "2025": 2.7}}, {"id": "c53f55aa-e31f-4fc5-ba86-059a5c61a8bc", "aspirasi": "Aspirasi 4", "akpi_code": "4.2", "indicator_bm": "Jumlah kematian di tempat kerja", "indicator_en": "", "lead_agency": "SHENA", "metric_type": "Bil", "direction": "≤ (Lower is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "", "definition_bm": "Jumlah bilangan kematian yang berlaku di tempat kerja dalam tempoh masa tertentu", "definition_en": "Total number of fatalities occurring at the workplace within a specified time period (No. of workplace fatality)", "target_2035": 0, "sort_order": 22, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 7, "2020": 4, "2021": 5, "2022": 3, "2023": 4, "2024": 4, "2025": 6}}, {"id": "43bbf598-8341-4072-9b6c-36997b9b6415", "aspirasi": "Aspirasi 4", "akpi_code": "4.3", "indicator_bm": "Indeks Kesediaan Smart Education (SERI)", "indicator_en": "", "lead_agency": "MOE", "metric_type": "Indeks", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "SERI 2024: Southeast Asia 1.89; Brunei 1.72; Target TBD after baseline", "validation_note": "Baseline not yet available", "definition_bm": "Indeks untuk mengukur tahap kesediaan (readiness) institusi-institusi pendidikan dan latihan dalam menerima pakai Revolusi Industri Ke-4 (4IR)", "definition_en": "An index to measure the readiness level of education and training institutions in adopting the Fourth Industrial Revolution (4IR) — Smart Education Readiness Index (SERI)", "target_2035": null, "sort_order": 23, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2024": 1.72}}]
-</script>
+</div><!-- /#appShell -->
+
+<script id="akpi-raw-data" type="application/json">[]</script>
 <script>
 // ===== Data & derived computation =====
 //
@@ -671,6 +702,8 @@ async function onAuthChanged(user){
   const authBtn = document.getElementById('authBtn');
   const editBtn = document.getElementById('editModeBtn');
   const signOutBtn = document.getElementById('signOutBtn');
+  const gate = document.getElementById('loginGate');
+  const shell = document.getElementById('appShell');
 
   if (!user){
     isAdmin = false; editMode = false;
@@ -679,10 +712,14 @@ async function onAuthChanged(user){
     signOutBtn.style.display = 'none';
     detachFirebaseListeners();
     RAW = STATIC_RAW; DERIVED = RAW.map(computeDerived);
-    setSyncPill('', '● Not signed in · static preview');
-    renderAll();
+    setSyncPill('', '● Not signed in');
+    gate.classList.remove('hidden');
+    shell.classList.remove('visible');
     return;
   }
+
+  gate.classList.add('hidden');
+  shell.classList.add('visible');
 
   authBtn.textContent = user.email || 'Account';
   signOutBtn.style.display = 'inline-block';
@@ -837,13 +874,6 @@ document.getElementById('authCloseBtn').addEventListener('click', closeAuthModal
 document.getElementById('authOverlay').addEventListener('click', e => {
   if (e.target.id === 'authOverlay') closeAuthModal();
 });
-document.getElementById('googleSignInBtn').addEventListener('click', async () => {
-  if (!fbAuth) return;
-  try{
-    const provider = new firebase.auth.GoogleAuthProvider();
-    await fbAuth.signInWithPopup(provider);
-  } catch(err){ showAuthError(err.message); }
-});
 document.getElementById('emailSignInBtn').addEventListener('click', async () => {
   if (!fbAuth) return;
   const email = document.getElementById('authEmail').value.trim();
@@ -856,6 +886,26 @@ document.getElementById('emailSignInBtn').addEventListener('click', async () => 
 document.getElementById('signOutBtn').addEventListener('click', async () => {
   if (fbAuth) await fbAuth.signOut();
   closeAuthModal();
+});
+
+function showGateError(msg){
+  const el = document.getElementById('gateErrorMsg');
+  el.textContent = msg; el.style.display = 'block';
+}
+document.getElementById('gateEmailBtn').addEventListener('click', async () => {
+  if (!fbAuth) { showGateError('Firebase is not connected yet.'); return; }
+  const email = document.getElementById('gateEmail').value.trim();
+  const password = document.getElementById('gatePassword').value;
+  if (!email || !password){ showGateError('Enter both email and password.'); return; }
+  try{
+    await fbAuth.signInWithEmailAndPassword(email, password);
+  } catch(err){ showGateError(err.message); }
+});
+document.getElementById('gatePassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('gateEmailBtn').click();
+});
+document.getElementById('authPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('emailSignInBtn').click();
 });
 
 // =========================================================================
