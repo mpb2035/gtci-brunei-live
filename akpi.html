@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manpower AKPI Dashboard · Wawasan Brunei 2035</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+:root{
+  --primary:#0a0a0a; --primary-active:#1f1f1f; --primary-disabled:#e5e5e5;
+  --ink:#0a0a0a; --body:#3a3a3a; --body-strong:#1a1a1a; --muted:#6a6a6a; --muted-soft:#9a9a9a;
+  --hairline:#e5e5e5; --hairline-soft:#f0f0f0;
+  --canvas:#fffaf0; --surface-soft:#faf5e8; --surface-card:#f5f0e0; --surface-strong:#ebe6d6;
+  --surface-dark:#0a1a1a; --surface-dark-elevated:#1a2a2a;
+  --on-primary:#ffffff; --on-dark:#ffffff; --on-dark-soft:#a0a0a0;
+  --pink:#ff4d8b; --teal:#1a3a3a; --lavender:#b8a4ed; --peach:#ffb084; --ochre:#e8b94a; --mint:#a4d4c5; --coral:#ff6b5a;
+  --success:#22c55e; --warning:#f59e0b; --error:#ef4444;
+  --r-xs:6px; --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px; --r-pill:9999px;
+  --sp-xxs:4px; --sp-xs:8px; --sp-sm:12px; --sp-md:16px; --sp-lg:24px; --sp-xl:32px; --sp-xxl:48px; --sp-section:72px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--canvas); color:var(--body); font-family:'Inter',sans-serif; font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.display{ font-family:'Inter',sans-serif; font-weight:500; letter-spacing:-0.05em; color:var(--ink); }
+h1,h2,h3{ margin:0; }
+a{ color:inherit; }
+.container{ max-width:1400px; margin:0 auto; padding:0 24px; }
+
+/* ===== Top Nav ===== */
+.top-nav{
+  background:var(--canvas); border-bottom:1px solid var(--hairline);
+  position:sticky; top:0; z-index:50;
+}
+.top-nav-inner{
+  max-width:1400px; margin:0 auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+}
+.brand{ display:flex; align-items:center; gap:12px; }
+.brand-mark{
+  width:40px; height:40px; border-radius:var(--r-md); background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:14px; letter-spacing:0; flex-shrink:0;
+}
+.brand-text h1{ font-size:20px; font-weight:600; letter-spacing:-0.3px; color:var(--ink); }
+.brand-text p{ font-size:13px; color:var(--muted); margin:2px 0 0; }
+
+.btn{
+  font-family:'Inter',sans-serif; font-size:14px; font-weight:600; line-height:1; border-radius:var(--r-md);
+  padding:12px 20px; height:44px; display:inline-flex; align-items:center; gap:8px; cursor:pointer; border:none;
+  transition:opacity .15s ease;
+}
+.btn:hover{ opacity:.85; }
+.btn-primary{ background:var(--primary); color:var(--on-primary); }
+.btn-secondary{ background:var(--canvas); color:var(--ink); border:1px solid var(--hairline); }
+.btn-secondary.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
+.btn-sm{ height:36px; padding:8px 14px; font-size:13px; }
+
+.nav-actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.sync-pill{
+  font-size:12px; font-weight:600; padding:6px 12px; border-radius:var(--r-pill); background:var(--surface-card); color:var(--muted);
+  display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+}
+.sync-pill.live{ background:#22c55e18; color:#178a44; }
+.sync-pill.error{ background:#ef444418; color:#b91c1c; }
+
+/* Editable cell (Data Entry) */
+.edit-cell-btn{
+  width:100%; background:transparent; border:1px dashed transparent; border-radius:var(--r-xs); padding:3px 4px;
+  font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink); cursor:pointer; text-align:center;
+}
+.editing-on .edit-cell-btn{ border-color:var(--hairline); }
+.editing-on .edit-cell-btn:hover{ background:var(--surface-soft); border-color:var(--ink); }
+.edit-cell-input{
+  width:56px; font-family:'Inter',sans-serif; font-size:12.5px; text-align:center; padding:3px 2px;
+  border:1px solid var(--ink); border-radius:var(--r-xs); background:#fff;
+}
+.readonly-note{ font-size:12px; color:var(--warning); background:#f59e0b14; border:1px solid #f59e0b40; padding:8px 14px; border-radius:var(--r-md); display:inline-flex; align-items:center; gap:6px; margin-bottom:12px; }
+
+/* Auth modal */
+.auth-field{ margin-bottom:12px; }
+.auth-field label{ font-size:12px; font-weight:600; color:var(--muted); display:block; margin-bottom:4px; }
+.auth-field input{
+  width:100%; height:44px; padding:0 14px; border-radius:var(--r-md); border:1px solid var(--hairline);
+  font-family:'Inter',sans-serif; font-size:14px; background:var(--canvas); color:var(--ink);
+}
+.auth-error{ color:var(--error); font-size:13px; margin-top:8px; }
+.auth-divider{ display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--muted-soft); font-size:12px; }
+.auth-divider::before,.auth-divider::after{ content:''; flex:1; height:1px; background:var(--hairline); }
+.mini-chart-wrap{ height:64px; margin-top:12px; }
+
+/* Scenario rate cards (Projection tab) */
+.scenario-rate-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+@media (max-width:640px){ .scenario-rate-row{ grid-template-columns:1fr; } }
+.scenario-rate-card{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px;
+  border-radius:var(--r-lg); border:2px solid var(--hairline); cursor:pointer; transition:border-color .15s ease, background .15s ease;
+  background:var(--surface-soft);
+}
+.scenario-rate-card.active{ border-color:var(--ink); background:var(--surface-card); }
+.scenario-rate-card .srow-label{ font-size:14px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:8px; }
+.scenario-rate-card .srow-label::before{ content:''; width:10px; height:10px; border-radius:50%; display:inline-block; }
+.scenario-rate-card.scenario-low .srow-label::before{ background:#22c55e; }
+.scenario-rate-card.scenario-medium .srow-label::before{ background:#f59e0b; }
+.scenario-rate-card.scenario-high .srow-label::before{ background:#ef4444; }
+.srow-input{ display:flex; align-items:center; gap:6px; background:var(--canvas); border:1px solid var(--hairline); border-radius:var(--r-md); padding:4px 10px; }
+.srow-input input{
+  width:56px; border:none; background:transparent; font-family:'Inter',sans-serif; font-size:15px; font-weight:600;
+  color:var(--ink); text-align:right; -moz-appearance:textfield;
+}
+.srow-input input::-webkit-outer-spin-button, .srow-input input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.srow-input .pct{ font-size:12px; color:var(--muted); }
+
+/* Modal custom projection control */
+.modal-proj-row{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--surface-soft); border-radius:var(--r-md);
+  padding:12px 14px; margin:14px 0 4px;
+}
+.modal-proj-row label{ font-size:12.5px; color:var(--muted); font-weight:600; }
+.modal-proj-row .srow-input{ background:var(--canvas); }
+.modal-proj-row .proj-result{ font-size:13px; color:var(--ink); margin-left:auto; }
+.modal-proj-row .proj-result strong{ color:#f59e0b; }
+
+/* Modal editable target field */
+.edit-target-input{
+  width:100%; height:40px; padding:0 12px; border-radius:var(--r-md); border:1px solid var(--hairline);
+  font-family:'Inter',sans-serif; font-size:14px; background:var(--canvas); color:var(--ink);
+}
+
+/* Initiatives sub-table (indicator modal) */
+.init-section{ border-top:1px solid var(--hairline); margin-top:24px; padding-top:16px; }
+.init-section-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.init-section-head h4{ font-size:14px; font-weight:600; color:var(--ink); margin:0; }
+.init-empty{ font-size:13px; color:var(--muted); padding:16px; text-align:center; background:var(--surface-soft); border-radius:var(--r-md); }
+.init-table-wrap{ overflow-x:auto; border-radius:var(--r-md); border:1px solid var(--hairline); }
+table.init-table{ width:100%; border-collapse:collapse; font-size:12px; min-width:1100px; }
+table.init-table thead th{
+  background:var(--surface-card); text-align:left; padding:8px 8px; font-weight:600; color:var(--ink); white-space:nowrap;
+}
+table.init-table tbody td{ padding:6px 8px; border-top:1px solid var(--hairline-soft); vertical-align:middle; }
+table.init-table tbody tr:hover td{ background:var(--surface-soft); }
+.init-cell-input, .init-cell-select{
+  width:100%; font-family:'Inter',sans-serif; font-size:12px; padding:4px 6px; border-radius:var(--r-xs);
+  border:1px solid var(--hairline); background:#fff; color:var(--ink); min-width:80px;
+}
+.init-progress-cell{ display:flex; align-items:center; gap:6px; }
+.init-progress-cell input[type=range]{ width:60px; }
+.init-row-actions{ display:flex; gap:4px; white-space:nowrap; }
+.init-icon-btn{
+  width:26px; height:26px; border-radius:var(--r-sm); border:1px solid var(--hairline); background:var(--canvas);
+  cursor:pointer; font-size:12px; display:inline-flex; align-items:center; justify-content:center; padding:0;
+}
+.init-icon-btn:hover{ background:var(--surface-soft); }
+.init-icon-btn.danger:hover{ background:#ef444418; border-color:#ef444460; color:#b91c1c; }
+.init-icon-btn.success{ background:var(--ink); color:#fff; border-color:var(--ink); }
+
+/* ===== Status summary ===== */
+.summary-band{ padding:32px 0 8px; }
+.summary-grid{
+  display:grid; grid-template-columns:repeat(6,1fr); gap:12px;
+}
+@media (max-width:1100px){ .summary-grid{ grid-template-columns:repeat(3,1fr);} }
+@media (max-width:640px){ .summary-grid{ grid-template-columns:repeat(2,1fr);} }
+
+.stat-card{
+  background:var(--surface-card); border-radius:var(--r-lg); padding:20px; cursor:pointer;
+  border:2px solid transparent; transition:transform .15s ease, border-color .15s ease;
+}
+.stat-card:hover{ transform:translateY(-2px); }
+.stat-card.active{ border-color:var(--ink); }
+.stat-card .label{ font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; justify-content:space-between; }
+.stat-card .value{ font-size:32px; font-weight:500; letter-spacing:-1px; margin-top:6px; font-family:'Inter',sans-serif; }
+.stat-card.total{ background:var(--ink); }
+.stat-card.total .label{ color:var(--on-dark-soft); }
+.stat-card.total .value{ color:#fff; }
+.dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+
+/* ===== Tabs ===== */
+.tabs-nav{
+  display:flex; gap:6px; padding:24px 0 0; flex-wrap:wrap;
+}
+.tab-btn{
+  font-family:'Inter',sans-serif; font-size:14px; font-weight:600; padding:10px 18px; border-radius:var(--r-pill);
+  border:none; background:transparent; color:var(--muted); cursor:pointer; transition:all .15s ease;
+}
+.tab-btn.active{ background:var(--surface-card); color:var(--ink); }
+.tab-btn:hover:not(.active){ background:var(--surface-soft); }
+
+.tab-panel{ display:none; padding:24px 0 64px; }
+.tab-panel.active{ display:block; }
+
+/* ===== Cards ===== */
+.card{
+  background:var(--canvas); border:1px solid var(--hairline); border-radius:var(--r-lg); padding:24px;
+}
+.card-title{ font-size:16px; font-weight:600; margin-bottom:16px; color:var(--ink); }
+
+.grid-2{ display:grid; grid-template-columns:1fr 2fr; gap:24px; }
+.grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.grid-4{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+@media (max-width:1000px){ .grid-2{ grid-template-columns:1fr; } .grid-3{ grid-template-columns:1fr 1fr;} .grid-4{ grid-template-columns:1fr 1fr; } }
+@media (max-width:640px){ .grid-3{ grid-template-columns:1fr;} .grid-4{ grid-template-columns:1fr;} }
+
+/* Feature cards (aspirasi) - saturated brand colors */
+.feature-card{ border-radius:var(--r-xl); padding:24px; }
+.feature-card h3{ font-size:18px; font-weight:600; }
+.feature-card .count{ font-size:36px; font-weight:500; letter-spacing:-1px; margin:4px 0; }
+.feature-card .sub{ font-size:13px; opacity:.85; }
+.feature-card .mini-bar{ height:8px; border-radius:var(--r-pill); background:rgba(0,0,0,.12); overflow:hidden; margin-top:14px; display:flex; }
+.feature-card.on-dark{ color:var(--on-dark); }
+.feature-card.on-dark .sub{ color:var(--on-dark-soft); }
+.feature-card.on-ink{ color:var(--ink); }
+.fc-pink{ background:var(--pink); }
+.fc-teal{ background:var(--teal); }
+.fc-lavender{ background:var(--lavender); }
+.fc-peach{ background:var(--peach); }
+.fc-ochre{ background:var(--ochre); }
+
+/* Progress bars */
+.progress{ height:6px; border-radius:var(--r-pill); background:var(--surface-strong); overflow:hidden; }
+.progress > div{ height:100%; border-radius:var(--r-pill); transition:width .3s ease; }
+
+/* Badge */
+.badge{
+  display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:4px 10px;
+  border-radius:var(--r-pill); border:1px solid; white-space:nowrap;
+}
+
+/* Progress list row */
+.plist-row{ display:flex; align-items:center; gap:16px; padding:10px 8px; border-radius:var(--r-md); cursor:pointer; }
+.plist-row:hover{ background:var(--surface-soft); }
+.plist-code{ width:44px; font-size:12px; font-family:monospace; color:var(--muted); flex-shrink:0; }
+.plist-main{ flex:1; min-width:0; }
+.plist-main .name{ font-size:14px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.plist-val{ text-align:right; font-size:12px; width:110px; flex-shrink:0; }
+.plist-val .num{ font-weight:600; color:var(--ink); font-size:13px; }
+.plist-status{ width:150px; text-align:right; flex-shrink:0; }
+
+/* Filters */
+.filters{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:20px; }
+select{
+  font-family:'Inter',sans-serif; font-size:14px; padding:10px 14px; border-radius:var(--r-md); border:1px solid var(--hairline);
+  background:var(--canvas); color:var(--ink); height:44px; cursor:pointer;
+}
+.count-badge{ margin-left:auto; font-size:13px; color:var(--muted); }
+
+/* Indicator card */
+.ind-card{
+  background:var(--surface-card); border-radius:var(--r-lg); padding:20px; cursor:pointer; transition:transform .15s ease;
+  border:1px solid transparent;
+}
+.ind-card:hover{ transform:translateY(-2px); border-color:var(--hairline); }
+.ind-card .top-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+.ind-card .meta{ font-size:11px; font-family:monospace; color:var(--muted); }
+.ind-card .title{ font-size:14px; font-weight:500; color:var(--ink); margin-top:4px; line-height:1.35;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.ind-card .num-row{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:16px; }
+.ind-card .big-num{ font-size:26px; font-weight:500; letter-spacing:-0.5px; color:var(--ink); }
+.ind-card .big-num .unit{ font-size:12px; color:var(--muted); font-weight:400; margin-left:2px; }
+.ind-card .small-note{ font-size:11px; color:var(--muted); margin-top:2px; }
+.ind-card .agency{ font-size:11px; color:var(--muted); text-align:right; }
+
+/* Table */
+.table-wrap{ overflow-x:auto; border-radius:var(--r-lg); border:1px solid var(--hairline); }
+table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+thead th{ position:sticky; top:0; background:var(--surface-card); text-align:center; padding:10px 6px; font-weight:600; color:var(--ink); white-space:nowrap; z-index:2; }
+thead th:nth-child(1), thead th:nth-child(2){ text-align:left; position:sticky; left:0; z-index:3; background:var(--surface-card); }
+thead th:nth-child(2){ left:56px; min-width:220px; }
+tbody td{ padding:8px 6px; text-align:center; border-top:1px solid var(--hairline-soft); white-space:nowrap; }
+tbody td:nth-child(1){ text-align:left; font-family:monospace; position:sticky; left:0; background:var(--canvas); font-weight:600; }
+tbody td:nth-child(2){ text-align:left; position:sticky; left:56px; background:var(--canvas); min-width:220px; }
+tbody tr:hover td{ background:var(--surface-soft); }
+tbody tr:hover td:nth-child(1), tbody tr:hover td:nth-child(2){ background:var(--surface-soft); }
+
+/* Definitions */
+.def-card{ background:var(--canvas); border:1px solid var(--hairline); border-radius:var(--r-lg); padding:20px; margin-bottom:12px; display:flex; gap:16px; }
+.def-code{ flex-shrink:0; }
+.def-body p{ margin:4px 0; font-size:14px; }
+.def-body .label{ color:var(--muted); font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
+
+/* Modal */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(10,10,10,.5); display:none; align-items:center; justify-content:center;
+  z-index:100; padding:24px;
+}
+.modal-overlay.open{ display:flex; }
+.modal{
+  background:var(--canvas); border-radius:var(--r-xl); max-width:820px; width:100%; max-height:88vh; overflow-y:auto;
+  padding:32px; position:relative;
+}
+.modal-close{
+  position:absolute; top:20px; right:20px; width:36px; height:36px; border-radius:50%; border:1px solid var(--hairline);
+  background:var(--canvas); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;
+}
+.modal h2{ font-size:22px; font-weight:600; padding-right:40px; }
+.modal .sub{ color:var(--muted); font-size:14px; margin-top:4px; }
+.stat-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:24px 0; }
+.stat-mini .label{ font-size:12px; color:var(--muted); }
+.stat-mini .val{ font-size:22px; font-weight:500; letter-spacing:-0.5px; color:var(--ink); }
+@media (max-width:640px){ .stat-row{ grid-template-columns:1fr 1fr; } }
+
+.trend-box{ background:var(--surface-soft); border-radius:var(--r-md); padding:14px; font-size:12.5px; color:var(--body); margin-bottom:16px; }
+.trend-box strong{ color:var(--ink); }
+
+footer.page-footer{ background:var(--surface-soft); padding:48px 0; text-align:center; color:var(--muted); font-size:13px; }
+footer.page-footer .mtn{ font-size:11px; color:var(--muted-soft); margin-top:8px; }
+
+.empty-note{ color:var(--muted); font-size:14px; padding:24px; text-align:center; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <div class="brand">
+      <div class="brand-mark">MPB</div>
+      <div class="brand-text">
+        <h1>Manpower AKPI Dashboard</h1>
+        <p>Wawasan Brunei 2035 · 24 indicators across 4 Aspirasi · Live Firebase sync</p>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="index.html#gtci" target="_top" class="btn btn-secondary" style="text-decoration:none;">🌐 GTCI 2025</a>
+      <span class="sync-pill" id="syncPill">● Static preview</span>
+      <button class="btn btn-secondary" id="editModeBtn" style="display:none;">✎ Edit Mode: Off</button>
+      <button class="btn btn-secondary" id="authBtn">Sign in</button>
+      <button class="btn btn-primary" id="exportBtn">⬇ Export CSV</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="summary-band">
+    <div class="summary-grid" id="summaryGrid"></div>
+  </div>
+
+  <div class="tabs-nav" id="tabsNav">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="indicators">Indicators</button>
+    <button class="tab-btn" data-tab="projection">Projection</button>
+    <button class="tab-btn" data-tab="data-entry">Data Entry</button>
+    <button class="tab-btn" data-tab="definitions">Definitions</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-title">Status Distribution</div>
+        <canvas id="statusPie" height="220"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-title">Breakdown by Aspirasi</div>
+        <canvas id="aspirasiBar" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:16px;" id="aspirasiCards"></div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Data Completeness by Year (2019–2025)</div>
+      <canvas id="completenessBar" height="140"></canvas>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Progress Toward 2035 Target</div>
+      <div id="progressList"></div>
+    </div>
+  </div>
+
+  <!-- INDICATORS -->
+  <div class="tab-panel" id="panel-indicators">
+    <div class="filters">
+      <select id="filterAspirasi"><option value="all">All Aspirasi</option></select>
+      <select id="filterStatus">
+        <option value="all">All Statuses</option>
+        <option>On Track</option>
+        <option>Needs Attention</option>
+        <option>Behind</option>
+        <option>No Data</option>
+        <option>Target Not Set</option>
+      </select>
+      <div class="count-badge" id="filterCount"></div>
+    </div>
+    <div class="grid-3" id="indicatorGrid"></div>
+  </div>
+
+  <!-- PROJECTION -->
+  <div class="tab-panel" id="panel-projection">
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Projection Scenarios</div>
+      <div class="sub" style="color:var(--muted);font-size:13px;margin:-8px 0 16px;">
+        Set your own annual growth rate for each scenario, then choose which one drives the indicator grid below.
+      </div>
+      <div class="scenario-rate-row">
+        <label class="scenario-rate-card scenario-low" data-scenario="low">
+          <span class="srow-label">Low</span>
+          <span class="srow-input"><input type="number" id="rateLow" step="0.1" min="-100" max="100" value="2"><span class="pct">%/yr</span></span>
+        </label>
+        <label class="scenario-rate-card scenario-medium" data-scenario="medium">
+          <span class="srow-label">Medium</span>
+          <span class="srow-input"><input type="number" id="rateMedium" step="0.1" min="-100" max="100" value="5"><span class="pct">%/yr</span></span>
+        </label>
+        <label class="scenario-rate-card scenario-high" data-scenario="high">
+          <span class="srow-label">High</span>
+          <span class="srow-input"><input type="number" id="rateHigh" step="0.1" min="-100" max="100" value="10"><span class="pct">%/yr</span></span>
+        </label>
+      </div>
+      <div class="filters" style="margin-bottom:0;margin-top:16px;">
+        <div class="count-badge" id="projSummary"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">On Pace vs Off Pace — by Scenario</div>
+      <canvas id="scenarioCompareChart" height="110"></canvas>
+    </div>
+
+    <div class="grid-3" id="projectionGrid"></div>
+  </div>
+
+  <!-- DATA ENTRY -->
+  <div class="tab-panel" id="panel-data-entry">
+    <div class="card-title" style="margin-bottom:12px;">Yearly Values · 2019 – 2025 (read-only)</div>
+    <div class="table-wrap">
+      <table id="dataTable">
+        <thead><tr></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DEFINITIONS -->
+  <div class="tab-panel" id="panel-definitions">
+    <div id="definitionsList"></div>
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  Manpower AKPI Dashboard · Government of Brunei Darussalam · Wawasan Brunei 2035
+  <div class="mtn">Auto-generated from AKPI indicator and yearly value data</div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authOverlay">
+  <div class="modal" id="authModalContent" style="max-width:420px;">
+    <button class="modal-close" id="authCloseBtn">✕</button>
+    <h2 style="font-size:20px;">Sign in</h2>
+    <div class="sub">Sign in with an approved account to view live data and edit values.</div>
+
+    <div style="margin-top:20px;">
+      <button class="btn btn-secondary" id="googleSignInBtn" style="width:100%;justify-content:center;">Sign in with Google</button>
+    </div>
+    <div class="auth-divider">or with email</div>
+    <div class="auth-field">
+      <label>Email</label>
+      <input type="email" id="authEmail" autocomplete="username">
+    </div>
+    <div class="auth-field">
+      <label>Password</label>
+      <input type="password" id="authPassword" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" id="emailSignInBtn" style="width:100%;justify-content:center;">Sign in</button>
+    <div class="auth-error" id="authErrorMsg" style="display:none;"></div>
+    <div style="margin-top:16px;text-align:center;">
+      <button class="btn-text-link" id="signOutBtn" style="display:none;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<script id="akpi-raw-data" type="application/json">[{"id": "32516ca9-6b12-4913-91e7-86e1bef64b1b", "aspirasi": "Aspirasi 1", "akpi_code": "1.1", "indicator_bm": "% 5 A-C dalam PSR", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - DE\n2021 note: SAM year", "validation_note": "", "definition_bm": "Peratus pelajar yang memperolehi gred A-C dalam lima mata pelajaran peperiksaan Penilaian Sekolah Rendah", "definition_en": "Percentage of students who obtained grades A-C in five subjects in the Primary School Assessment (PSR) examination", "target_2035": 90, "sort_order": 0, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 74.1, "2020": 74.1, "2021": 75.9, "2022": 61.1, "2023": 71.6, "2024": 64.5, "2025": 64.7, "2026": null}}, {"id": "049cb582-9e18-49fb-a621-59c11ddc1967", "aspirasi": "Aspirasi 1", "akpi_code": "1.2", "indicator_bm": "% ≥ 5 kredit/jayyid GCE/IGCSE O-Level/SPUB atau sebanding", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - DE\n2021 note: SAG year", "validation_note": "", "definition_bm": "Peratus pelajar memperolehi sekurang-kurangnya 5 kredit dalam peperiksaan Brunei Cambridge GCE dan IGCSE di peringkat \"O\" atau SPUB atau sebanding", "definition_en": "Percentage of students obtaining at least 5 credits/jayyid in GCE/IGCSE O-Level/Sijil Pelajaran Ugama Brunei (SPUB) or equivalent examinations", "target_2035": 60, "sort_order": 1, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T04:07:07.51835+00", "values": {"2019": 41.1, "2020": 45.3, "2021": 56.5, "2022": 45.4, "2023": 43.8, "2024": 44.2, "2025": 44.1}}, {"id": "c9eccd10-fc23-44d6-b58e-6bbfeaa71d65", "aspirasi": "Aspirasi 1", "akpi_code": "1.3", "indicator_bm": "% Pangkat 1 dalam SSSRU", "indicator_en": "", "lead_agency": "MORA", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "", "definition_bm": "Peratus pelajar yang memperolehi Pangkat 1 dalam Sijil Sekolah-Sekolah Rendah Ugama", "definition_en": "Percentage of students who obtained Pangkat 1 in the Sijil Sekolah-Sekolah Rendah Ugama (SSSRU)", "target_2035": 73, "sort_order": 2, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 61.7, "2020": 68.1, "2021": 56.1, "2022": 52.8, "2023": 63.8, "2024": 60.55, "2025": 64.95}}, {"id": "91b17699-0c3f-48c3-ba19-600c2296f483", "aspirasi": "Aspirasi 1", "akpi_code": "1.4", "indicator_bm": "Kadar pengambilan kasar ke pendidikan tertiari", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "2025 data pending", "definition_bm": "Peratus pengambilan pelajar ke peringkat pengajian tinggi di BDQF tahap 5 dan 6", "definition_en": "Percentage of student intake into higher education at BDQF Level 5 and 6 out of the total cohort of students at the official age in Year 1, 13 years later (Gross intake rate to tertiary education)", "target_2035": 55, "sort_order": 3, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 40, "2020": 38.2, "2021": 47.7, "2022": 46.1, "2023": 53.9, "2024": 48.2}}, {"id": "bb0c08b2-f444-4174-8474-b7052e72a911", "aspirasi": "Aspirasi 1", "akpi_code": "1.5", "indicator_bm": "Kadar pengijazahan TVET atau sebanding dan ke atas", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT", "validation_note": "2025 data pending", "definition_bm": "Kadar pengijazahan graduan di peringkat kelulusan tahap BDQF 2 dan ke atas", "definition_en": "Graduation rate of graduates at BDQF qualification Level 2 and above (Graduation rate for TVET or equivalent & above)", "target_2035": 90, "sort_order": 4, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 89.8, "2020": 89.2, "2021": 91, "2022": 86.8, "2023": 89.5, "2024": 90.5}}, {"id": "8874c403-462f-44a9-bbfc-f3784a27d7f7", "aspirasi": "Aspirasi 1", "akpi_code": "1.6", "indicator_bm": "Jumlah kolaborasi antara IPT tempatan dan institusi/agensi luar negeri", "indicator_en": "", "lead_agency": "MOE", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT\n\n2024 source shows ambiguous \"284/210\"", "validation_note": "2024 value to be validated", "definition_bm": "Jumlah Memorandum Persefahaman (MOU) yang aktif di antara IPT tempatan (awam dan swasta) dengan agensi-agensi berkaitan luar negeri", "definition_en": "Number of active Memoranda of Understanding (MOU) between local Higher Education Institutions – public and private – and relevant overseas institutions/agencies", "target_2035": 261, "sort_order": 5, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-13T06:53:37.45844+00", "values": {"2020": 129, "2021": 150, "2022": 166, "2023": 174, "2025": 284}}, {"id": "c6018177-194e-4f3b-b86a-8288c0403e5e", "aspirasi": "Aspirasi 1", "akpi_code": "1.7", "indicator_bm": "% pelajar IPT tempatan dengan kemahiran dalam teknologi baharu dan kelestarian", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT\n\nCore modules to start 2026", "validation_note": "Baseline not yet available", "definition_bm": "Peratus pelajar di IPT tempatan yang telah menamatkan modul teras berkaitan teknologi baharu (emerging technologies) dan kelestarian (sustainability)", "definition_en": "Percentage of local higher education institution students who have completed core modules in emerging technologies and sustainability", "target_2035": null, "sort_order": 6, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {}}, {"id": "ef41f05a-b3d8-4663-a80e-8a9d89739f29", "aspirasi": "Aspirasi 2", "akpi_code": "2.1", "indicator_bm": "% Graduan sains & kejuruteraan BDQF Tahap 6 dan ke atas", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT", "validation_note": "2025 data pending", "definition_bm": "Peratus graduan BDQF tahap 6 ke 8 dalam bidang sains & kejuruteraan", "definition_en": "Percentage of graduates with BDQF Level 6 to 8 qualifications in the fields of science & engineering", "target_2035": 50, "sort_order": 7, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 37.4, "2020": 33.9, "2021": 35.1, "2022": 37.5, "2023": 34.5, "2024": 37.1}}, {"id": "3a476641-2dac-4ef6-b83b-a5d65fd6bada", "aspirasi": "Aspirasi 2", "akpi_code": "2.2", "indicator_bm": "Jumlah usahawan tempatan", "indicator_en": "", "lead_agency": "KTK", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "Target references sasaran EB", "validation_note": "2025 data pending", "definition_bm": "Jumlah bilangan individu tempatan yang mempunyai usaha perniagaan mereka sendiri (employers and own-account workers)", "definition_en": "Total number of local individuals who own their own business ventures (employers and own-account workers)", "target_2035": 26040, "sort_order": 8, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2021": 13791, "2022": 11994, "2023": 13000, "2024": 15400}}, {"id": "9f8971d4-8ee1-4572-a438-7a34649ba687", "aspirasi": "Aspirasi 2", "akpi_code": "2.3", "indicator_bm": "Jumlah paten diberikan", "indicator_en": "", "lead_agency": "BruIPO", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "2025 data pending", "definition_bm": "Jumlah hak eksklusif yang diberikan untuk ciptaan, yang boleh berupa produk atau proses, yang memberikan penyelesaian teknikal baru kepada sesuatu masalah", "definition_en": "Total number of exclusive rights granted for inventions – which may be products or processes – that provide new technical solutions to a problem", "target_2035": 1, "sort_order": 9, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 0, "2020": 0, "2021": 0, "2022": 0, "2023": 0, "2024": 0}}, {"id": "3cab7e49-d142-4c27-8bc1-f9568abc7541", "aspirasi": "Aspirasi 2", "akpi_code": "2.4", "indicator_bm": "Kadar kepuasan majikan", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "2020: TVET 82.4%; HE 80.3%", "validation_note": "2025 data pending; 2023 data previously noted as unavailable", "definition_bm": "Purata tahap kepuasan majikan terhadap prestasi kerja graduan daripada IPT tempatan yang telah bekerja sekurang-kurangnya 6 bulan", "definition_en": "Average level of employer satisfaction with work performance of graduates from local higher education institutions who have been employed for at least 6 months", "target_2035": 90, "sort_order": 10, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2021": 80.6, "2022": 81.2, "2023": 80.2, "2024": 77.8}}, {"id": "a6f36690-42c6-4073-a2eb-b617feb468f7", "aspirasi": "Aspirasi 2", "akpi_code": "2.5", "indicator_bm": "Kadar penyertaan latihan di kalangan umur bekerja", "indicator_en": "", "lead_agency": "KTK", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "New question added to KTK 2026", "validation_note": "No data yet", "definition_bm": "Kadar peratusan individu berumur 18-64 yang menyertai sebarang program atau aktiviti pembelajaran sepanjang hayat dalam tempoh 12 bulan yang lalu", "definition_en": "Percentage of individuals aged 18-64 who participated in any lifelong learning programme or activity in the past 12 months (Training participation rate of working-age population)", "target_2035": null, "sort_order": 11, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {}}, {"id": "deeb1a29-acfd-4ce6-bd94-a1080f455af7", "aspirasi": "Aspirasi 2", "akpi_code": "2.6", "indicator_bm": "Kadar tenaga kerja dengan kemahiran digital", "indicator_en": "", "lead_agency": "KTK", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "Target under review (Dalam penelitian)", "validation_note": "2025 data pending", "definition_bm": "Kadar peratusan tenaga kerja yang memiliki kemahiran digital penting yang diperlukan untuk pasaran kerja moden", "definition_en": "Percentage of the workforce possessing essential digital skills required for the modern labour market", "target_2035": null, "sort_order": 12, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2024": 91}}, {"id": "dabb29fa-53c0-4a7a-9122-707b452b6076", "aspirasi": "Aspirasi 2", "akpi_code": "2.7", "indicator_bm": "% sekolah yang mencapai minima Gred 3 (Aktif) dalam PSP", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "2026 will be baseline for full implementation", "validation_note": "No historical data", "definition_bm": "Peratus sekolah rendah dan menengah yang mencapai minima tahap Gred 3 (aktif) dalam Program Sahsiah Pelajar (PSP)", "definition_en": "Percentage of primary and secondary schools achieving at least Grade 3 (Active) in the Student Character Programme (PSP)", "target_2035": 100, "sort_order": 13, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {}}, {"id": "11b95b36-4adc-4fb9-9cff-fdb0777ac237", "aspirasi": "Aspirasi 2", "akpi_code": "2.8", "indicator_bm": "Jumlah insiden disiplin (buli, pergaduhan, dadah)", "indicator_en": "", "lead_agency": "MOE", "metric_type": "Bil", "direction": "≤ (Lower is better)", "review_cycle": "Annual", "source_note": "MOE Focal - TSUT PC Office", "validation_note": "No data yet", "definition_bm": "Jumlah pelajar di Institusi Pendidikan Tempatan yang mempunyai rekod disiplin dalam setahun seperti buli, pergaduhan dan penyalahgunaan dadah", "definition_en": "Total number of students in local education institutions who have discipline records in a year, including bullying, fighting and drug abuse", "target_2035": 0, "sort_order": 14, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {}}, {"id": "43c92842-0f22-4169-842c-cb7234365f1d", "aspirasi": "Aspirasi 3", "akpi_code": "3.1", "indicator_bm": "Kadar pengangguran jangka panjang", "indicator_en": "", "lead_agency": "KTK", "metric_type": "%", "direction": "≤ (Lower is better)", "review_cycle": "Annual", "source_note": "Target ≤ 2.0%", "validation_note": "2025 data pending", "definition_bm": "Peratusan tenaga kerja yang sedang mencari kerja dan menganggur lebih daripada setahun", "definition_en": "Percentage of the labour force who are actively seeking work and have been unemployed for more than one year (Long-term unemployment rate)", "target_2035": 2, "sort_order": 15, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 4.4, "2020": 3.4, "2021": 2.8, "2022": 2.4, "2023": 2.7, "2024": 2.7}}, {"id": "21440d55-4979-40f1-84dc-b4bb4e9ecf0a", "aspirasi": "Aspirasi 3", "akpi_code": "3.2", "indicator_bm": "Kadar pekerjaan golongan rentan warga tempatan", "indicator_en": "", "lead_agency": "PPTM", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "2024 and 2025 validated from detailed calculation slide", "validation_note": "Target under review (Dalam penelitian)", "definition_bm": "Peratusan golongan rentan tempatan yang bekerja atau bekerja sendiri yang disahkan (verified) mengikut definisi TAP", "definition_en": "Percentage of verified local vulnerable groups who are employed or self-employed as per TAP definition", "target_2035": null, "sort_order": 16, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2023": 27, "2024": 38}}, {"id": "ae74849e-3c30-454e-99d6-b306bc4e0a7d", "aspirasi": "Aspirasi 3", "akpi_code": "3.3", "indicator_bm": "Jumlah individu bekerja sendiri mencarum SPK secara sukarela", "indicator_en": "", "lead_agency": "TAP", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "Target = sekurang-kurangnya 3,000", "validation_note": "", "definition_bm": "Jumlah individu yang bekerja sendiri tanpa mempunyai majikan atau pekerja dibawahnya, yang mencarum secara sukarela ke dalam SPK (verified and non-verified) mengikut definisi TAP", "definition_en": "Total number of self-employed individuals without an employer or employees under them who voluntarily contribute into SPK, whether verified or otherwise, as defined by TAP", "target_2035": 3000, "sort_order": 17, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 1055, "2020": 1102, "2021": 991, "2022": 858, "2023": 879, "2024": 475, "2025": 407}}, {"id": "4e5d2e65-79a0-46a7-993e-f5a1cdc4b19e", "aspirasi": "Aspirasi 3", "akpi_code": "3.4", "indicator_bm": "Kadar kebolehkerjaan graduan", "indicator_en": "", "lead_agency": "MOE", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Champion - JPT", "validation_note": "2025 data pending", "definition_bm": "Peratus graduan yang mendapat pekerjaan enam (6) bulan selepas tamat pengajian/majlis konvokesyen daripada IPT tempatan awam dan swasta", "definition_en": "Percentage of graduates who obtained employment six months after completing their studies/convocation from local public and private higher education institutions (Graduate employment rate)", "target_2035": 80, "sort_order": 18, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 58.1, "2020": 67.7, "2021": 67.8, "2022": 76, "2023": 63.6, "2024": 61}}, {"id": "86eb44d5-4fd3-41b0-80ef-91322f52da15", "aspirasi": "Aspirasi 3", "akpi_code": "3.5", "indicator_bm": "Jumlah pekerja tempatan dalam jawatan PMET di sektor swasta", "indicator_en": "", "lead_agency": "KTK", "metric_type": "Bil", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "Target references sasaran EB", "validation_note": "2025 data pending", "definition_bm": "Pekerja tempatan yang menjawat jawatan PMET (profesional, pengurusan, eksekutif dan teknikal) mengikut ISCO-08 dan BDSOC di sektor swasta", "definition_en": "Number of local workers holding PMET positions in accordance with ISCO-08 and BDSOC in the private sector", "target_2035": 65100, "sort_order": 19, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 27532, "2020": 29323, "2021": 30167, "2022": 33976, "2023": 35900, "2024": 38500}}, {"id": "872f61ca-3ed3-475f-8f27-b8e5931ead8a", "aspirasi": "Aspirasi 3", "akpi_code": "3.6", "indicator_bm": "% belia umur 15–24 dikategorikan sebagai NEET", "indicator_en": "", "lead_agency": "JPES", "metric_type": "%", "direction": "≤ (Lower is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "2025 data pending", "definition_bm": "NEET merujuk kepada golongan belia umur 15-24 tahun yang tidak mengikuti sebarang pendidikan formal, tidak mempunyai pekerjaan, dan tidak menjalani latihan kemahiran", "definition_en": "NEET refers to youth aged 15 to 24 years who are not in any formal education, do not have employment, and are not undergoing skills training or vocational training at a given time", "target_2035": 15, "sort_order": 20, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 20.1, "2020": 21.2, "2021": 18.7, "2022": 20, "2023": 16.5, "2024": 19}}, {"id": "c00153e8-b5b3-4879-a142-70d1a742d3ce", "aspirasi": "Aspirasi 4", "akpi_code": "4.1", "indicator_bm": "Kadar perbelanjaan IPT tempatan bagi kegiatan penyelidikan", "indicator_en": "", "lead_agency": "MOE / MORA", "metric_type": "%", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "MOE Focal - SUTHE Office\n\nAt TK2025/26, 2.7% = $3.3 juta", "validation_note": "", "definition_bm": "Peratus peruntukan bagi kegiatan penyelidikan di IPTA tempatan (di bawah kawalan MOE dan MORA) daripada keseluruhan peruntukan (Gaji Kakitangan + Perbelanjaan Berulang-ulang)", "definition_en": "Percentage of allocation for research activities at local public higher education institutions (IPTA under MOE and MORA) out of total allocation (Staff Salaries + Recurring Expenditure)", "target_2035": 5, "sort_order": 21, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 0.4, "2020": 0.5, "2021": 0.6, "2022": 1.3, "2023": 1.5, "2024": 1.9, "2025": 2.7}}, {"id": "c53f55aa-e31f-4fc5-ba86-059a5c61a8bc", "aspirasi": "Aspirasi 4", "akpi_code": "4.2", "indicator_bm": "Jumlah kematian di tempat kerja", "indicator_en": "", "lead_agency": "SHENA", "metric_type": "Bil", "direction": "≤ (Lower is better)", "review_cycle": "Annual", "source_note": "", "validation_note": "", "definition_bm": "Jumlah bilangan kematian yang berlaku di tempat kerja dalam tempoh masa tertentu", "definition_en": "Total number of fatalities occurring at the workplace within a specified time period (No. of workplace fatality)", "target_2035": 0, "sort_order": 22, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2019": 7, "2020": 4, "2021": 5, "2022": 3, "2023": 4, "2024": 4, "2025": 6}}, {"id": "43bbf598-8341-4072-9b6c-36997b9b6415", "aspirasi": "Aspirasi 4", "akpi_code": "4.3", "indicator_bm": "Indeks Kesediaan Smart Education (SERI)", "indicator_en": "", "lead_agency": "MOE", "metric_type": "Indeks", "direction": "≥ (Higher is better)", "review_cycle": "Annual", "source_note": "SERI 2024: Southeast Asia 1.89; Brunei 1.72; Target TBD after baseline", "validation_note": "Baseline not yet available", "definition_bm": "Indeks untuk mengukur tahap kesediaan (readiness) institusi-institusi pendidikan dan latihan dalam menerima pakai Revolusi Industri Ke-4 (4IR)", "definition_en": "An index to measure the readiness level of education and training institutions in adopting the Fourth Industrial Revolution (4IR) — Smart Education Readiness Index (SERI)", "target_2035": null, "sort_order": 23, "created_at": "2026-06-10T03:18:43.412482+00", "updated_at": "2026-06-10T03:18:43.412482+00", "values": {"2024": 1.72}}]
+</script>
+<script>
+// ===== Data & derived computation =====
+//
+// FIREBASE CONFIG — replace with your sfzn-dash Firebase project values.
+// Firebase Console > Project settings > General > Your apps > SDK setup and configuration.
+// (These are the same client-side values used in src/integrations/firebase/config.ts —
+// safe to embed in a static file; access is enforced by your database.rules.json, not by
+// hiding this config.)
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyB54ArigQ0fFUOUIP4m_4GOu1aamcCZAJc",
+  authDomain: "gtcibn25.firebaseapp.com",
+  databaseURL: "https://gtcibn25-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gtcibn25",
+  storageBucket: "gtcibn25.firebasestorage.app",
+  messagingSenderId: "517287023900",
+  appId: "1:517287023900:web:49f2542a3f907c309f56d9"
+};
+const FIREBASE_CONFIGURED = !/YOUR_/.test(FIREBASE_CONFIG.apiKey + FIREBASE_CONFIG.databaseURL);
+
+const STATIC_RAW = JSON.parse(document.getElementById('akpi-raw-data').textContent);
+const HISTORICAL_YEARS = [2019,2020,2021,2022,2023,2024,2025];
+const STATUS_ORDER = ['On Track','Needs Attention','Behind','No Data','Target Not Set'];
+const STATUS_COLORS = {
+  'On Track':'#22c55e','Needs Attention':'#f59e0b','Behind':'#ef4444','No Data':'#6a6a6a','Target Not Set':'#b8a4ed'
+};
+const ASPIRASI_STYLES = {
+  'Aspirasi 1': {cls:'fc-pink on-dark'},
+  'Aspirasi 2': {cls:'fc-teal on-dark'},
+  'Aspirasi 3': {cls:'fc-lavender on-ink'},
+  'Aspirasi 4': {cls:'fc-peach on-ink'},
+};
+
+// ---- Initiative classification -------------------------------------------
+// "Type" groups initiatives by the *mechanism* they use to move an indicator —
+// broader than incentive/policy/one-off alone, so every real-world initiative
+// has an unambiguous home.
+const INITIATIVE_TYPES = [
+  'Policy / Regulatory',        // new or amended law, regulation, standard
+  'Incentive / Financial Scheme', // grants, subsidies, tax incentives, funding
+  'Capacity Building / Training', // skills training, curricula, certification
+  'Infrastructure / Systems',      // physical or digital infrastructure, IT platforms
+  'Public Awareness / Campaign',   // communications, outreach, engagement
+  'Partnership / Collaboration',   // MOUs, inter-agency or international tie-ups
+  'Pilot / One-off Project',       // time-boxed trial or single deliverable
+  'Ongoing Programme',             // continuous/recurring, no fixed end date
+];
+// "Timeline" classifies duration/horizon — kept separate from actual Start/End
+// dates below so you get both a quick-scan bucket and precise scheduling.
+const TIMELINE_CLASSES = [
+  'Short-term (≤ 1 year)',
+  'Medium-term (1–3 years)',
+  'Long-term (3+ years / to 2035)',
+  'Ongoing / Continuous',
+];
+const INITIATIVE_STATUS = ['Planned','In Progress','Completed','Delayed','On Hold','Cancelled'];
+const INITIATIVE_STATUS_COLORS = {
+  'Planned':'#9a9a9a','In Progress':'#3b82f6','Completed':'#22c55e','Delayed':'#ef4444','On Hold':'#f59e0b','Cancelled':'#6a6a6a'
+};
+const INITIATIVE_PRIORITY = ['High','Medium','Low'];
+const INITIATIVE_PRIORITY_COLORS = { 'High':'#ef4444','Medium':'#f59e0b','Low':'#6a6a6a' };
+
+let RAW = STATIC_RAW;         // live-replaced once Firebase data arrives
+let DERIVED = RAW.map(computeDerived);
+let rawIndicators = {};       // firebase-shape: { id: {...indicator, id} }
+let rawYearlyValues = {};     // firebase-shape: { id: {..., indicator_id, year, value} }
+let rawInitiatives = {};      // firebase-shape: { id: {..., indicator_id, initiative, ...} }
+let initiativesByIndicator = {}; // computed: { indicator_id: [ {...}, ... ] } sorted by created_at
+
+
+function computeDerived(ind){
+  const isHigherBetter = !(ind.direction || '').startsWith('≤');
+  let latestValue = null, latestYear = null;
+  for (let y = 2035; y >= 2019; y--){
+    const v = ind.values[String(y)];
+    if (v !== null && v !== undefined && !Number.isNaN(Number(v))){
+      latestValue = Number(v); latestYear = y; break;
+    }
+  }
+  let progressPct = null, status = 'No Data';
+  if (ind.target_2035 == null){
+    status = latestValue == null ? 'No Data' : 'Target Not Set';
+  } else if (latestValue == null){
+    status = 'No Data';
+  } else {
+    if (isHigherBetter){
+      progressPct = ind.target_2035 === 0 ? (latestValue >= 0 ? 1 : 0) : latestValue / ind.target_2035;
+    } else {
+      progressPct = ind.target_2035 === 0 ? (latestValue === 0 ? 1 : 0) : ind.target_2035 / Math.max(latestValue, 0.0001);
+    }
+    if (progressPct >= 1) status = 'On Track';
+    else if (progressPct >= 0.7) status = 'Needs Attention';
+    else status = 'Behind';
+  }
+  return Object.assign({}, ind, { latestValue, latestYear, progressPct, status, isHigherBetter });
+}
+
+function computeLinearTrend(d){
+  const pts = [];
+  for (const y of HISTORICAL_YEARS){
+    const v = d.values[String(y)];
+    if (v != null && !Number.isNaN(Number(v))) pts.push({x:y, y:Number(v)});
+  }
+  if (pts.length < 2) return null;
+  const n = pts.length;
+  const sumX = pts.reduce((a,p)=>a+p.x,0), sumY = pts.reduce((a,p)=>a+p.y,0);
+  const meanX = sumX/n, meanY = sumY/n;
+  let num=0, den=0, ssTot=0;
+  for (const p of pts){ num += (p.x-meanX)*(p.y-meanY); den += (p.x-meanX)**2; ssTot += (p.y-meanY)**2; }
+  if (den === 0) return null;
+  const slope = num/den, intercept = meanY - slope*meanX;
+  let ssRes = 0;
+  for (const p of pts){ const yhat = slope*p.x+intercept; ssRes += (p.y-yhat)**2; }
+  const r2 = ssTot === 0 ? 1 : 1 - ssRes/ssTot;
+  return { slope, intercept, n, firstYear: pts[0].x, lastYear: pts[pts.length-1].x, r2 };
+}
+
+function computeProjection(d, ratePct){
+  const empty = { projected2035:null, projectedProgressPct:null, willMeetTarget:false };
+  if (d.latestValue == null || d.latestYear == null) return empty;
+  const r = ratePct/100;
+  const yrs = 2035 - d.latestYear;
+  const factor = d.isHigherBetter ? Math.pow(1+r, yrs) : Math.pow(Math.max(1-r,0), yrs);
+  const projected2035 = d.latestValue * factor;
+  let projectedProgressPct = null, willMeetTarget = false;
+  if (d.target_2035 != null){
+    if (d.isHigherBetter){
+      projectedProgressPct = d.target_2035 === 0 ? (projected2035 >= 0 ? 1:0) : projected2035/d.target_2035;
+      willMeetTarget = projected2035 >= d.target_2035;
+    } else {
+      projectedProgressPct = d.target_2035 === 0 ? (projected2035 === 0 ? 1:0) : d.target_2035/Math.max(projected2035,0.0001);
+      willMeetTarget = projected2035 <= d.target_2035;
+    }
+  }
+  return { projected2035, projectedProgressPct, willMeetTarget };
+}
+
+function esc(s){
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmtNum(v){
+  if (v == null || Number.isNaN(v)) return '—';
+  return Math.round(v*100)/100;
+}
+
+// ===== State =====
+let stateAspirasiFilter = 'all';
+let stateStatusFilter = 'all';
+let stateScenario = 'medium';
+let SCENARIO_RATES = { low:2, medium:5, high:10 }; // user-editable via Projection tab inputs
+
+let isAdmin = false;
+let currentUser = null;
+let editMode = false;
+
+// =========================================================================
+// Firebase
+// =========================================================================
+let fbApp = null, fbAuth = null, fbDb = null;
+
+function setSyncPill(state, label){
+  const el = document.getElementById('syncPill');
+  el.className = 'sync-pill' + (state ? ' ' + state : '');
+  el.textContent = label;
+}
+
+function initFirebase(){
+  if (!FIREBASE_CONFIGURED){
+    setSyncPill('', '● Static preview · add Firebase config to enable live sync');
+    return;
+  }
+  try{
+    fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+    fbAuth = firebase.auth();
+    fbDb = firebase.database();
+    setSyncPill('', '● Not signed in · static preview');
+    fbAuth.onAuthStateChanged(onAuthChanged);
+  } catch(err){
+    console.error('Firebase init failed', err);
+    setSyncPill('error', '● Firebase config error');
+  }
+}
+
+async function onAuthChanged(user){
+  currentUser = user;
+  const authBtn = document.getElementById('authBtn');
+  const editBtn = document.getElementById('editModeBtn');
+  const signOutBtn = document.getElementById('signOutBtn');
+
+  if (!user){
+    isAdmin = false; editMode = false;
+    authBtn.textContent = 'Sign in';
+    editBtn.style.display = 'none';
+    signOutBtn.style.display = 'none';
+    detachFirebaseListeners();
+    RAW = STATIC_RAW; DERIVED = RAW.map(computeDerived);
+    setSyncPill('', '● Not signed in · static preview');
+    renderAll();
+    return;
+  }
+
+  authBtn.textContent = user.email || 'Account';
+  signOutBtn.style.display = 'inline-block';
+  closeAuthModal();
+
+  try{
+    const adminSnap = await fbDb.ref('admins/' + user.uid).get();
+    isAdmin = adminSnap.exists() && adminSnap.val() === true;
+  } catch(err){
+    console.warn('Admin check failed (likely no read access):', err.message);
+    isAdmin = false;
+  }
+  editBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+  updateEditModeBtn();
+
+  attachFirebaseListeners();
+}
+
+function attachFirebaseListeners(){
+  if (!fbDb) return;
+  setSyncPill('live', '● Connecting to Firebase…');
+  fbDb.ref('akpi_indicators').on('value', snap => {
+    rawIndicators = snap.val() || {};
+    rebuildFromFirebase();
+  }, err => { console.error(err); setSyncPill('error', '● Sync error: ' + err.message); });
+
+  fbDb.ref('akpi_yearly_values').on('value', snap => {
+    rawYearlyValues = snap.val() || {};
+    rebuildFromFirebase();
+  }, err => { console.error(err); setSyncPill('error', '● Sync error: ' + err.message); });
+
+  fbDb.ref('akpi_initiatives').on('value', snap => {
+    rawInitiatives = snap.val() || {};
+    rebuildInitiatives();
+  }, err => { console.error(err); /* node may not exist yet in rules — non-fatal */ });
+}
+
+function detachFirebaseListeners(){
+  if (!fbDb) return;
+  fbDb.ref('akpi_indicators').off();
+  fbDb.ref('akpi_yearly_values').off();
+  fbDb.ref('akpi_initiatives').off();
+  rawIndicators = {}; rawYearlyValues = {}; rawInitiatives = {}; initiativesByIndicator = {};
+}
+
+function rebuildInitiatives(){
+  const grouped = {};
+  Object.values(rawInitiatives).forEach(v => {
+    if (!v || !v.indicator_id) return;
+    if (!grouped[v.indicator_id]) grouped[v.indicator_id] = [];
+    grouped[v.indicator_id].push(v);
+  });
+  Object.values(grouped).forEach(list => list.sort((a,b) => (a.created_at||'').localeCompare(b.created_at||'')));
+  initiativesByIndicator = grouped;
+  renderModalInitiativesIfOpen();
+  renderIndicators(); // keep the "N supporting initiatives" badge in sync
+}
+
+function rebuildFromFirebase(){
+  if (!Object.keys(rawIndicators).length) return; // wait for indicators to arrive
+  const valuesByIndicator = {};
+  Object.values(rawYearlyValues).forEach(v => {
+    if (!v || !v.indicator_id) return;
+    if (!valuesByIndicator[v.indicator_id]) valuesByIndicator[v.indicator_id] = {};
+    valuesByIndicator[v.indicator_id][String(v.year)] = v.value == null ? null : Number(v.value);
+  });
+  const merged = Object.values(rawIndicators).map(i => ({
+    ...i,
+    target_2035: i.target_2035 == null ? null : Number(i.target_2035),
+    values: valuesByIndicator[i.id] || {},
+  })).sort((a,b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+  RAW = merged;
+  DERIVED = RAW.map(computeDerived);
+  setSyncPill('live', '● Live · synced with Firebase');
+  renderAll();
+}
+
+// Upsert a single (indicator_id, year) value — mirrors the app's Supabase-style
+// upsert with onConflict: 'indicator_id,year', re-implemented for the Realtime DB.
+async function saveValue(indicatorId, year, value){
+  if (!fbDb) throw new Error('Firebase not connected');
+  const existing = Object.entries(rawYearlyValues).find(([, v]) =>
+    v && v.indicator_id === indicatorId && Number(v.year) === Number(year));
+  const ts = new Date().toISOString();
+  if (existing){
+    const [key, row] = existing;
+    await fbDb.ref(`akpi_yearly_values/${key}`).update({ value, updated_at: ts });
+  } else {
+    const key = fbDb.ref('akpi_yearly_values').push().key;
+    await fbDb.ref(`akpi_yearly_values/${key}`).set({
+      id: key, indicator_id: indicatorId, year: Number(year), value,
+      created_at: ts, updated_at: ts,
+    });
+  }
+}
+
+async function saveIndicatorPatch(indicatorId, patch){
+  if (!fbDb) throw new Error('Firebase not connected');
+  await fbDb.ref(`akpi_indicators/${indicatorId}`).update({ ...patch, updated_at: new Date().toISOString() });
+}
+
+// ---- Initiatives CRUD ------------------------------------------------------
+async function createInitiative(indicatorId){
+  if (!fbDb) throw new Error('Firebase not connected');
+  const ts = new Date().toISOString();
+  const key = fbDb.ref('akpi_initiatives').push().key;
+  const record = {
+    id: key, indicator_id: indicatorId,
+    initiative: 'New initiative', target_audience: '', type: INITIATIVE_TYPES[0],
+    timeline: TIMELINE_CLASSES[0], start_date: '', end_date: '',
+    department: '', ministry: '', status: 'Planned', priority: 'Medium',
+    progress_pct: 0, owner: '', notes: '',
+    created_at: ts, updated_at: ts,
+  };
+  await fbDb.ref(`akpi_initiatives/${key}`).set(record);
+  return key;
+}
+async function saveInitiativePatch(initiativeId, patch){
+  if (!fbDb) throw new Error('Firebase not connected');
+  await fbDb.ref(`akpi_initiatives/${initiativeId}`).update({ ...patch, updated_at: new Date().toISOString() });
+}
+async function deleteInitiative(initiativeId){
+  if (!fbDb) throw new Error('Firebase not connected');
+  await fbDb.ref(`akpi_initiatives/${initiativeId}`).remove();
+}
+
+// =========================================================================
+// Auth modal
+// =========================================================================
+function openAuthModal(){
+  document.getElementById('authErrorMsg').style.display = 'none';
+  document.getElementById('authOverlay').classList.add('open');
+}
+function closeAuthModal(){ document.getElementById('authOverlay').classList.remove('open'); }
+function showAuthError(msg){
+  const el = document.getElementById('authErrorMsg');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+document.getElementById('authBtn').addEventListener('click', () => {
+  if (currentUser){ openAuthModal(); return; }
+  if (!FIREBASE_CONFIGURED){
+    showAuthError('');
+    openAuthModal();
+    showAuthError('Firebase isn\'t configured yet — add your project config at the top of the script to enable sign-in.');
+    return;
+  }
+  openAuthModal();
+});
+document.getElementById('authCloseBtn').addEventListener('click', closeAuthModal);
+document.getElementById('authOverlay').addEventListener('click', e => {
+  if (e.target.id === 'authOverlay') closeAuthModal();
+});
+document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+  if (!fbAuth) return;
+  try{
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await fbAuth.signInWithPopup(provider);
+  } catch(err){ showAuthError(err.message); }
+});
+document.getElementById('emailSignInBtn').addEventListener('click', async () => {
+  if (!fbAuth) return;
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  if (!email || !password){ showAuthError('Enter both email and password.'); return; }
+  try{
+    await fbAuth.signInWithEmailAndPassword(email, password);
+  } catch(err){ showAuthError(err.message); }
+});
+document.getElementById('signOutBtn').addEventListener('click', async () => {
+  if (fbAuth) await fbAuth.signOut();
+  closeAuthModal();
+});
+
+// =========================================================================
+// Edit mode toggle
+// =========================================================================
+function updateEditModeBtn(){
+  const btn = document.getElementById('editModeBtn');
+  btn.textContent = editMode ? '✎ Edit Mode: On' : '✎ Edit Mode: Off';
+  btn.classList.toggle('on', editMode);
+}
+document.getElementById('editModeBtn').addEventListener('click', () => {
+  if (!isAdmin) return;
+  editMode = !editMode;
+  updateEditModeBtn();
+  renderDataTable();
+  document.getElementById('dataTable').closest('.table-wrap').parentElement.classList.toggle('editing-on', editMode);
+});
+
+// =========================================================================
+// Render: Status Summary
+// =========================================================================
+function renderSummary(){
+  const grid = document.getElementById('summaryGrid');
+  const counts = {}; STATUS_ORDER.forEach(s=>counts[s]=0);
+  DERIVED.forEach(d=>counts[d.status]++);
+  let html = `<div class="stat-card total"><div class="label">Total AKPIs</div><div class="value">${DERIVED.length}</div></div>`;
+  STATUS_ORDER.forEach(s=>{
+    const active = stateStatusFilter === s ? 'active' : '';
+    html += `<div class="stat-card ${active}" data-status="${esc(s)}">
+      <div class="label"><span>${esc(s)}</span><span class="dot" style="background:${STATUS_COLORS[s]}"></span></div>
+      <div class="value" style="color:${STATUS_COLORS[s]}">${counts[s]}</div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+  grid.querySelectorAll('.stat-card[data-status]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const s = el.getAttribute('data-status');
+      stateStatusFilter = (stateStatusFilter === s) ? 'all' : s;
+      document.getElementById('filterStatus').value = stateStatusFilter;
+      renderSummary();
+      renderIndicators();
+      switchTab('indicators');
+    });
+  });
+}
+
+// =========================================================================
+// Charts (overview)
+// =========================================================================
+let pieChart, barChart, completenessChart;
+function renderCharts(){
+  const counts = {}; STATUS_ORDER.forEach(s=>counts[s]=0);
+  DERIVED.forEach(d=>counts[d.status]++);
+  const pieLabels = STATUS_ORDER.filter(s=>counts[s]>0);
+  const pieData = pieLabels.map(s=>counts[s]);
+  const pieColors = pieLabels.map(s=>STATUS_COLORS[s]);
+
+  if (pieChart) pieChart.destroy();
+  pieChart = new Chart(document.getElementById('statusPie'), {
+    type:'doughnut',
+    data:{ labels:pieLabels, datasets:[{ data:pieData, backgroundColor:pieColors, borderWidth:0 }] },
+    options:{ plugins:{ legend:{ position:'bottom', labels:{font:{family:'Inter',size:11}} } }, cutout:'60%' }
+  });
+
+  const aspirasis = Array.from(new Set(DERIVED.map(d=>d.aspirasi))).sort();
+  const byAsp = aspirasis.map(a=>{
+    const row = { aspirasi:a };
+    STATUS_ORDER.forEach(s=>row[s]=0);
+    DERIVED.filter(d=>d.aspirasi===a).forEach(d=>row[d.status]++);
+    return row;
+  });
+  if (barChart) barChart.destroy();
+  barChart = new Chart(document.getElementById('aspirasiBar'), {
+    type:'bar',
+    data:{
+      labels: byAsp.map(b=>b.aspirasi),
+      datasets: STATUS_ORDER.map(s=>({
+        label:s, data:byAsp.map(b=>b[s]), backgroundColor:STATUS_COLORS[s], stack:'a'
+      }))
+    },
+    options:{
+      responsive:true,
+      plugins:{ legend:{ position:'bottom', labels:{font:{family:'Inter',size:11}} } },
+      scales:{ x:{ stacked:true, grid:{display:false} }, y:{ stacked:true, ticks:{stepSize:1} } }
+    }
+  });
+
+  const yearCompleteness = HISTORICAL_YEARS.map(y=>({
+    year:String(y), withData: DERIVED.filter(d=>d.values[String(y)] != null).length
+  }));
+  if (completenessChart) completenessChart.destroy();
+  completenessChart = new Chart(document.getElementById('completenessBar'), {
+    type:'bar',
+    data:{ labels: yearCompleteness.map(y=>y.year), datasets:[{ label:'KPIs with data', data: yearCompleteness.map(y=>y.withData), backgroundColor:'#0a0a0a', borderRadius:6 }] },
+    options:{ plugins:{ legend:{display:false} }, scales:{ y:{ max: DERIVED.length, ticks:{stepSize:4} } } }
+  });
+}
+
+// =========================================================================
+// Aspirasi feature cards
+// =========================================================================
+function renderAspirasiCards(){
+  const el = document.getElementById('aspirasiCards');
+  const aspirasis = Array.from(new Set(DERIVED.map(d=>d.aspirasi))).sort();
+  let html = '';
+  aspirasis.forEach(a=>{
+    const items = DERIVED.filter(d=>d.aspirasi===a);
+    const style = ASPIRASI_STYLES[a] || {cls:'fc-ochre on-ink'};
+    const counts = {}; STATUS_ORDER.forEach(s=>counts[s]=0);
+    items.forEach(d=>counts[d.status]++);
+    let barSegs = '';
+    STATUS_ORDER.forEach(s=>{
+      if (counts[s] > 0){
+        const pct = (counts[s]/items.length*100).toFixed(1);
+        barSegs += `<div style="width:${pct}%;background:${STATUS_COLORS[s]}"></div>`;
+      }
+    });
+    html += `<div class="feature-card ${style.cls}">
+      <h3>${esc(a)}</h3>
+      <div class="count">${items.length}</div>
+      <div class="sub">indicators tracked</div>
+      <div class="mini-bar">${barSegs}</div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+// =========================================================================
+// Progress list (overview)
+// =========================================================================
+function renderProgressList(){
+  const el = document.getElementById('progressList');
+  let html = '';
+  DERIVED.forEach(d=>{
+    const pct = Math.min((d.progressPct ?? 0)*100, 100);
+    html += `<div class="plist-row" data-id="${esc(d.id)}">
+      <div class="plist-code">${esc(d.akpi_code)}</div>
+      <div class="plist-main">
+        <div class="name">${esc(d.indicator_bm)}</div>
+        <div class="progress"><div style="width:${pct}%;background:${STATUS_COLORS[d.status]}"></div></div>
+      </div>
+      <div class="plist-val">
+        <div class="num">${fmtNum(d.latestValue)} / ${d.target_2035 ?? '—'}</div>
+        <div>${d.progressPct == null ? '—' : Math.round(d.progressPct*100)+'%'}</div>
+      </div>
+      <div class="plist-status"><span class="badge" style="color:${STATUS_COLORS[d.status]};border-color:${STATUS_COLORS[d.status]}66;background:${STATUS_COLORS[d.status]}18">${esc(d.status)}</span></div>
+    </div>`;
+  });
+  el.innerHTML = html;
+  el.querySelectorAll('.plist-row').forEach(r=>r.addEventListener('click',()=>openModal(r.getAttribute('data-id'))));
+}
+
+// =========================================================================
+// Indicators tab — now with a per-card mini trend chart
+// =========================================================================
+let indicatorMiniCharts = {}; // id -> Chart instance
+
+function populateFilterOptions(){
+  const aspSel = document.getElementById('filterAspirasi');
+  aspSel.innerHTML = '<option value="all">All Aspirasi</option>';
+  const aspirasis = Array.from(new Set(DERIVED.map(d=>d.aspirasi))).sort();
+  aspirasis.forEach(a=>{
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    aspSel.appendChild(opt);
+  });
+  aspSel.value = stateAspirasiFilter;
+}
+
+function destroyIndicatorMiniCharts(){
+  Object.values(indicatorMiniCharts).forEach(c => c.destroy());
+  indicatorMiniCharts = {};
+}
+
+function renderIndicators(){
+  const grid = document.getElementById('indicatorGrid');
+  destroyIndicatorMiniCharts();
+  const filtered = DERIVED.filter(d =>
+    (stateAspirasiFilter === 'all' || d.aspirasi === stateAspirasiFilter) &&
+    (stateStatusFilter === 'all' || d.status === stateStatusFilter)
+  );
+  document.getElementById('filterCount').textContent = `${filtered.length} of ${DERIVED.length}`;
+  let html = '';
+  filtered.forEach(d=>{
+    const pct = Math.min((d.progressPct ?? 0)*100, 100);
+    const initCount = (initiativesByIndicator[d.id] || []).length;
+    html += `<div class="ind-card" data-id="${esc(d.id)}">
+      <div class="top-row">
+        <div>
+          <div class="meta">${esc(d.aspirasi)} · ${esc(d.akpi_code)}</div>
+          <div class="title">${esc(d.indicator_bm)}</div>
+        </div>
+        <span class="badge" style="color:${STATUS_COLORS[d.status]};border-color:${STATUS_COLORS[d.status]}66;background:${STATUS_COLORS[d.status]}18">${esc(d.status)}</span>
+      </div>
+      <div class="num-row">
+        <div>
+          <div class="big-num">${fmtNum(d.latestValue)}<span class="unit">${esc(d.metric_type||'')}</span></div>
+          <div class="small-note">Latest: ${d.latestYear ?? '—'} · Target: ${d.target_2035 ?? '—'}</div>
+        </div>
+        <div class="agency">${d.isHigherBetter ? '↑' : '↓'} ${esc(d.lead_agency||'')}</div>
+      </div>
+      <div class="progress" style="margin-top:12px;"><div style="width:${pct}%;background:${STATUS_COLORS[d.status]}"></div></div>
+      <div class="mini-chart-wrap"><canvas id="mini-${esc(d.id)}"></canvas></div>
+      ${initCount ? `<div class="small-note" style="margin-top:8px;">📋 ${initCount} supporting initiative${initCount===1?'':'s'}</div>` : ''}
+    </div>`;
+  });
+  grid.innerHTML = html || '<div class="empty-note">No indicators match the selected filters.</div>';
+  grid.querySelectorAll('.ind-card').forEach(c=>{
+    c.addEventListener('click', (e)=>{
+      if (e.target.closest('canvas')) return; // avoid opening modal from a chart click artifact
+      openModal(c.getAttribute('data-id'));
+    });
+  });
+
+  // Build a mini sparkline-style chart for every visible indicator card.
+  filtered.forEach(d=>{
+    const canvas = document.getElementById(`mini-${d.id}`);
+    if (!canvas) return;
+    const years = HISTORICAL_YEARS;
+    const values = years.map(y => { const v = d.values[String(y)]; return v==null?null:Number(v); });
+    const targetLine = d.target_2035 != null ? years.map(()=>d.target_2035) : null;
+    indicatorMiniCharts[d.id] = new Chart(canvas, {
+      type:'line',
+      data:{
+        labels: years,
+        datasets:[
+          { data: values, borderColor: STATUS_COLORS[d.status], backgroundColor: STATUS_COLORS[d.status]+'22',
+            fill:true, tension:.3, spanGaps:true, pointRadius:0, borderWidth:2 },
+          ...(targetLine ? [{ data: targetLine, borderColor:'#9a9a9a', borderDash:[3,3], borderWidth:1, pointRadius:0 }] : []),
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{enabled:true, callbacks:{ title: (items)=>String(years[items[0].dataIndex]) } } },
+        scales:{ x:{display:false}, y:{display:false} },
+        elements:{ point:{radius:0} },
+      }
+    });
+  });
+}
+
+document.getElementById('filterAspirasi').addEventListener('change', e=>{ stateAspirasiFilter = e.target.value; renderIndicators(); });
+document.getElementById('filterStatus').addEventListener('change', e=>{ stateStatusFilter = e.target.value; renderIndicators(); renderSummary(); });
+
+// =========================================================================
+// Projection tab
+// =========================================================================
+let scenarioCompareChart = null;
+
+function summarizeScenario(rate){
+  let willMeet=0, willMiss=0, noData=0;
+  DERIVED.forEach(d=>{
+    const p = computeProjection(d, rate);
+    if (d.target_2035 == null || p.projected2035 == null) noData++;
+    else if (p.willMeetTarget) willMeet++;
+    else willMiss++;
+  });
+  return { willMeet, willMiss, noData };
+}
+
+function renderScenarioRateInputs(){
+  document.getElementById('rateLow').value = SCENARIO_RATES.low;
+  document.getElementById('rateMedium').value = SCENARIO_RATES.medium;
+  document.getElementById('rateHigh').value = SCENARIO_RATES.high;
+  document.querySelectorAll('.scenario-rate-card').forEach(card=>{
+    card.classList.toggle('active', card.getAttribute('data-scenario') === stateScenario);
+  });
+}
+
+function renderScenarioCompareChart(){
+  const low = summarizeScenario(SCENARIO_RATES.low);
+  const med = summarizeScenario(SCENARIO_RATES.medium);
+  const high = summarizeScenario(SCENARIO_RATES.high);
+  const labels = [
+    `Low (${fmtNum(SCENARIO_RATES.low)}%/yr)`,
+    `Medium (${fmtNum(SCENARIO_RATES.medium)}%/yr)`,
+    `High (${fmtNum(SCENARIO_RATES.high)}%/yr)`,
+  ];
+  if (scenarioCompareChart) scenarioCompareChart.destroy();
+  scenarioCompareChart = new Chart(document.getElementById('scenarioCompareChart'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        { label:'On pace', data:[low.willMeet, med.willMeet, high.willMeet], backgroundColor:'#22c55e', stack:'a' },
+        { label:'Off pace', data:[low.willMiss, med.willMiss, high.willMiss], backgroundColor:'#ef4444', stack:'a' },
+        { label:'No data / no target', data:[low.noData, med.noData, high.noData], backgroundColor:'#9a9a9a', stack:'a' },
+      ]
+    },
+    options:{
+      indexAxis:'y',
+      plugins:{ legend:{ position:'bottom', labels:{font:{family:'Inter',size:11}} } },
+      scales:{ x:{ stacked:true, ticks:{stepSize:4} }, y:{ stacked:true, grid:{display:false} } }
+    }
+  });
+}
+
+function renderProjection(){
+  const rate = SCENARIO_RATES[stateScenario];
+  const grid = document.getElementById('projectionGrid');
+  let willMeet=0, willMiss=0, noData=0;
+  let html = '';
+  DERIVED.forEach(d=>{
+    const p = computeProjection(d, rate);
+    if (d.target_2035 == null || p.projected2035 == null) noData++;
+    else if (p.willMeetTarget) willMeet++;
+    else willMiss++;
+    const color = (d.target_2035 == null || p.projected2035 == null) ? '#9a9a9a' : (p.willMeetTarget ? '#22c55e' : '#ef4444');
+    html += `<div class="ind-card" data-id="${esc(d.id)}">
+      <div class="top-row">
+        <div>
+          <div class="meta">${esc(d.aspirasi)} · ${esc(d.akpi_code)}</div>
+          <div class="title">${esc(d.indicator_bm)}</div>
+        </div>
+      </div>
+      <div class="num-row">
+        <div>
+          <div class="big-num" style="color:${color}">${p.projected2035==null?'—':fmtNum(p.projected2035)}<span class="unit">${esc(d.metric_type||'')}</span></div>
+          <div class="small-note">Projected 2035 · Target ${d.target_2035 ?? '—'}</div>
+        </div>
+        <div class="agency">${p.projected2035==null?'No data':(p.willMeetTarget?'On pace ✓':'Off pace ✗')}</div>
+      </div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+  grid.querySelectorAll('.ind-card').forEach(c=>c.addEventListener('click',()=>openModal(c.getAttribute('data-id'))));
+  document.getElementById('projSummary').textContent = `${willMeet} on pace · ${willMiss} off pace · ${noData} no data — driving the grid: ${stateScenario[0].toUpperCase()+stateScenario.slice(1)} @ ${fmtNum(rate)}%/yr`;
+  renderScenarioRateInputs();
+  renderScenarioCompareChart();
+}
+
+function updateScenarioRate(key, rawValue){
+  const value = Number(rawValue);
+  if (Number.isNaN(value)) return;
+  SCENARIO_RATES[key] = value;
+  renderProjection();
+}
+
+document.getElementById('rateLow').addEventListener('input', e => updateScenarioRate('low', e.target.value));
+document.getElementById('rateMedium').addEventListener('input', e => updateScenarioRate('medium', e.target.value));
+document.getElementById('rateHigh').addEventListener('input', e => updateScenarioRate('high', e.target.value));
+document.querySelectorAll('.scenario-rate-card').forEach(card=>{
+  card.addEventListener('click', (e)=>{
+    if (e.target.tagName === 'INPUT') return; // don't hijack focus while typing
+    stateScenario = card.getAttribute('data-scenario');
+    renderProjection();
+  });
+});
+
+// =========================================================================
+// Data entry table — inline editable when Edit Mode is on (admins only)
+// =========================================================================
+function renderDataTable(){
+  const thead = document.querySelector('#dataTable thead tr');
+  const tbody = document.querySelector('#dataTable tbody');
+  const wrap = document.getElementById('panel-data-entry');
+
+  let noteHtml = '';
+  if (editMode && isAdmin){
+    noteHtml = `<div class="readonly-note" style="background:#22c55e14;border-color:#22c55e40;color:#178a44;">✎ Edit Mode is on — click any cell to change its value. Changes save to Firebase immediately.</div>`;
+  } else if (!isAdmin){
+    noteHtml = `<div class="readonly-note">ℹ Read-only — sign in with an admin account to edit values.</div>`;
+  }
+  const titleEl = wrap.querySelector('.card-title');
+  let noteEl = wrap.querySelector('.readonly-note');
+  if (noteEl) noteEl.remove();
+  if (noteHtml){
+    titleEl.insertAdjacentHTML('afterend', noteHtml);
+  }
+
+  let headHtml = '<th>AKPI</th><th>Indicator</th>';
+  HISTORICAL_YEARS.forEach(y=> headHtml += `<th>${y}</th>`);
+  headHtml += '<th>Target</th><th>Status</th>';
+  thead.innerHTML = headHtml;
+
+  const canEdit = editMode && isAdmin;
+  let bodyHtml = '';
+  DERIVED.forEach(d=>{
+    bodyHtml += `<tr data-id="${esc(d.id)}"><td>${esc(d.akpi_code)}</td><td>${esc(d.indicator_bm)}</td>`;
+    HISTORICAL_YEARS.forEach(y=>{
+      const v = d.values[String(y)];
+      const display = v==null ? '—' : v;
+      if (canEdit){
+        bodyHtml += `<td><button class="edit-cell-btn" data-id="${esc(d.id)}" data-year="${y}" data-value="${v==null?'':v}">${display}</button></td>`;
+      } else {
+        bodyHtml += `<td>${display}</td>`;
+      }
+    });
+    if (canEdit){
+      bodyHtml += `<td><button class="edit-cell-btn" data-id="${esc(d.id)}" data-year="target" data-value="${d.target_2035==null?'':d.target_2035}"><strong>${d.target_2035 ?? '—'}</strong></button></td>`;
+    } else {
+      bodyHtml += `<td><strong>${d.target_2035 ?? '—'}</strong></td>`;
+    }
+    bodyHtml += `<td><span class="badge" style="color:${STATUS_COLORS[d.status]};border-color:${STATUS_COLORS[d.status]}66;background:${STATUS_COLORS[d.status]}18">${esc(d.status)}</span></td></tr>`;
+  });
+  tbody.innerHTML = bodyHtml;
+
+  if (canEdit){
+    tbody.querySelectorAll('.edit-cell-btn').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{ e.stopPropagation(); startInlineEdit(btn); });
+    });
+    wrap.classList.add('editing-on');
+  } else {
+    wrap.classList.remove('editing-on');
+    tbody.querySelectorAll('tr').forEach(r=>r.addEventListener('click',()=>openModal(r.getAttribute('data-id'))));
+  }
+}
+
+function startInlineEdit(btn){
+  const id = btn.getAttribute('data-id');
+  const year = btn.getAttribute('data-year');
+  const current = btn.getAttribute('data-value');
+  const input = document.createElement('input');
+  input.type = 'number'; input.step = 'any';
+  input.className = 'edit-cell-input';
+  input.value = current;
+  btn.replaceWith(input);
+  input.focus(); input.select();
+
+  const commit = async () => {
+    const raw = input.value.trim();
+    const value = raw === '' ? null : Number(raw);
+    if (raw !== '' && Number.isNaN(value)){ renderDataTable(); return; }
+    try{
+      if (year === 'target'){
+        await saveIndicatorPatch(id, { target_2035: value });
+      } else {
+        await saveValue(id, Number(year), value);
+      }
+      // Firebase listener will re-render via rebuildFromFirebase(); render now
+      // too in case listener latency is noticeable.
+    } catch(err){
+      alert('Save failed: ' + err.message);
+      renderDataTable();
+    }
+  };
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', (e)=>{
+    if (e.key === 'Enter') input.blur();
+    if (e.key === 'Escape'){ input.value = current; input.blur(); }
+  });
+}
+
+// =========================================================================
+// Definitions tab
+// =========================================================================
+function renderDefinitions(){
+  const el = document.getElementById('definitionsList');
+  let html = '';
+  DERIVED.forEach(d=>{
+    html += `<div class="def-card">
+      <div class="def-code"><span class="badge" style="color:var(--ink);border-color:var(--hairline);background:var(--surface-card)">${esc(d.akpi_code)}</span></div>
+      <div class="def-body">
+        <p style="font-weight:600;">${esc(d.indicator_bm)}</p>
+        <p style="color:var(--muted);font-size:12px;">${esc(d.aspirasi)} · ${esc(d.lead_agency||'—')} · ${esc(d.metric_type||'—')}</p>
+        ${d.definition_bm ? `<p><span class="label">BM: </span>${esc(d.definition_bm)}</p>` : ''}
+        ${d.definition_en ? `<p><span class="label">EN: </span>${esc(d.definition_en)}</p>` : ''}
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+// =========================================================================
+// Detail modal (with optional admin target/direction editing)
+// =========================================================================
+let modalChart = null;
+let currentModalIndicatorId = null;
+let editingInitiativeId = null; // which initiative row is in inline-edit state
+
+function openModal(id){
+  const d = DERIVED.find(x=>x.id===id);
+  if (!d) return;
+  currentModalIndicatorId = id;
+  editingInitiativeId = null;
+  const modal = document.getElementById('modalContent');
+  const trend = computeLinearTrend(d);
+  const trend2035 = trend ? trend.slope*2035 + trend.intercept : null;
+
+  let trendHtml = '';
+  if (trend){
+    trendHtml = `<div class="trend-box">
+      <strong>Average linear trend (${trend.firstYear}–${trend.lastYear}, n=${trend.n})</strong><br>
+      Slope: <strong>${trend.slope>=0?'+':''}${trend.slope.toFixed(3)}</strong> per year ·
+      Fit (R²): <strong>${trend.r2.toFixed(3)}</strong>
+      ${trend2035!=null ? ` · Projected 2035 (trendline): <strong>${trend2035.toFixed(2)}</strong>` : ''}
+    </div>`;
+  } else {
+    trendHtml = `<div class="trend-box">Not enough historical data points to compute a trendline (need at least 2).</div>`;
+  }
+
+  const adminEditHtml = (isAdmin && editMode) ? `
+    <div style="border-top:1px solid var(--hairline);margin-top:20px;padding-top:16px;">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Admin: edit target / direction</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px;">Target 2035</label>
+          <input class="edit-target-input" id="modalTargetInput" type="number" step="any" value="${d.target_2035 ?? ''}" placeholder="No target set">
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px;">Direction</label>
+          <select class="edit-target-input" id="modalDirectionSelect">
+            <option value="≥ (Higher is better)" ${d.direction==='≥ (Higher is better)'?'selected':''}>≥ (Higher is better)</option>
+            <option value="≤ (Lower is better)" ${d.direction==='≤ (Lower is better)'?'selected':''}>≤ (Lower is better)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  ` : '';
+
+  modal.innerHTML = `
+    <button class="modal-close" id="modalCloseBtn">✕</button>
+    <h2>${esc(d.akpi_code)} · ${esc(d.indicator_bm)}</h2>
+    <div class="sub">${esc(d.aspirasi)} · ${esc(d.lead_agency||'—')} · ${esc(d.metric_type||'—')}</div>
+    <div class="stat-row">
+      <div class="stat-mini"><div class="label">Latest (${d.latestYear ?? '—'})</div><div class="val">${fmtNum(d.latestValue)}</div></div>
+      <div class="stat-mini"><div class="label">Target 2035</div><div class="val">${d.target_2035 ?? '—'}</div></div>
+      <div class="stat-mini"><div class="label">Progress</div><div class="val">${d.progressPct==null?'—':Math.round(d.progressPct*100)+'%'}</div></div>
+      <div class="stat-mini"><div class="label">Status</div><div class="val" style="color:${STATUS_COLORS[d.status]};font-size:15px;">${esc(d.status)}</div></div>
+    </div>
+    ${trendHtml}
+    <canvas id="modalTrendChart" height="180"></canvas>
+    <div class="modal-proj-row">
+      <label for="modalCustomRate">Custom projection rate</label>
+      <span class="srow-input">
+        <input type="number" id="modalCustomRate" step="0.1" min="-100" max="100" value="${SCENARIO_RATES.medium}">
+        <span class="pct">%/yr</span>
+      </span>
+      <span class="proj-result" id="modalProjResult"></span>
+    </div>
+    ${(d.definition_bm||d.definition_en) ? `<div style="margin-top:20px;font-size:14px;">
+      ${d.definition_bm?`<p><span class="label" style="color:var(--muted);">Definisi (BM): </span>${esc(d.definition_bm)}</p>`:''}
+      ${d.definition_en?`<p><span class="label" style="color:var(--muted);">Definition (EN): </span>${esc(d.definition_en)}</p>`:''}
+    </div>` : ''}
+    ${(d.source_note||d.validation_note) ? `<div style="margin-top:12px;font-size:12.5px;color:var(--muted);">
+      ${d.source_note?`<p><strong>Source:</strong> ${esc(d.source_note).replace(/\n/g,'<br>')}</p>`:''}
+      ${d.validation_note?`<p><strong>Validation:</strong> ${esc(d.validation_note)}</p>`:''}
+    </div>` : ''}
+    ${adminEditHtml}
+    <div class="init-section" id="modalInitSection"></div>
+  `;
+  document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').classList.add('open');
+  renderModalInitiatives(id);
+
+  if (isAdmin && editMode){
+    const targetInput = document.getElementById('modalTargetInput');
+    const dirSelect = document.getElementById('modalDirectionSelect');
+    targetInput.addEventListener('blur', async () => {
+      const raw = targetInput.value.trim();
+      const value = raw === '' ? null : Number(raw);
+      if (raw !== '' && Number.isNaN(value)) return;
+      try{ await saveIndicatorPatch(d.id, { target_2035: value }); } catch(err){ alert('Save failed: ' + err.message); }
+    });
+    dirSelect.addEventListener('change', async () => {
+      try{ await saveIndicatorPatch(d.id, { direction: dirSelect.value }); } catch(err){ alert('Save failed: ' + err.message); }
+    });
+  }
+
+  const allYears = Array.from({length:17}, (_,i)=>2019+i);
+  const chartData = allYears.map(y=>{
+    const actual = d.values[String(y)];
+    let trendline = trend ? trend.slope*y + trend.intercept : null;
+    return { year:y, value: actual==null?null:Number(actual), target: d.target_2035, trendline };
+  });
+
+  function buildCustomProjectionSeries(ratePct){
+    if (d.latestValue == null || d.latestYear == null) return allYears.map(()=>null);
+    const r = ratePct/100;
+    return allYears.map(y=>{
+      if (y < d.latestYear) return null;
+      const yrs = y - d.latestYear;
+      const factor = d.isHigherBetter ? Math.pow(1+r, yrs) : Math.pow(Math.max(1-r,0), yrs);
+      return d.latestValue * factor;
+    });
+  }
+
+  const initialRate = Number(document.getElementById('modalCustomRate')?.value ?? SCENARIO_RATES.medium);
+  const customSeries = buildCustomProjectionSeries(initialRate);
+
+  if (modalChart) modalChart.destroy();
+  modalChart = new Chart(document.getElementById('modalTrendChart'), {
+    type:'line',
+    data:{
+      labels: chartData.map(r=>r.year),
+      datasets:[
+        { label:'Historical', data: chartData.map(r=>r.value), borderColor:'#0a0a0a', backgroundColor:'#0a0a0a', spanGaps:true, tension:.2, pointRadius:3 },
+        ...(d.target_2035!=null ? [{ label:'Target', data: chartData.map(r=>r.target), borderColor:'#22c55e', borderDash:[4,4], pointRadius:0 }] : []),
+        ...(trend ? [{ label:'Avg Trendline', data: chartData.map(r=>r.trendline), borderColor:'#f59e0b', borderDash:[6,3], pointRadius:0 }] : []),
+        { label:'Your projection', data: customSeries, borderColor:'#7c3aed', backgroundColor:'#7c3aed22', borderDash:[2,2], pointRadius:0, tension:.1 },
+      ]
+    },
+    options:{ plugins:{ legend:{ position:'bottom', labels:{font:{family:'Inter',size:11}} } }, scales:{ x:{ grid:{display:false} } } }
+  });
+
+  function updateProjResultText(ratePct, series){
+    const el = document.getElementById('modalProjResult');
+    const projected2035 = series[series.length-1];
+    if (projected2035 == null){ el.innerHTML = 'No historical value to project from.'; return; }
+    let meets = '';
+    if (d.target_2035 != null){
+      const onPace = d.isHigherBetter ? projected2035 >= d.target_2035 : projected2035 <= d.target_2035;
+      meets = onPace ? ' <span style="color:#22c55e;">— on pace to meet target</span>' : ' <span style="color:#ef4444;">— off pace vs target</span>';
+    }
+    el.innerHTML = `At <strong>${fmtNum(ratePct)}%/yr</strong>, projected 2035 value: <strong>${fmtNum(projected2035)}</strong>${meets}`;
+  }
+  updateProjResultText(initialRate, customSeries);
+
+  document.getElementById('modalCustomRate').addEventListener('input', (e) => {
+    const rate = Number(e.target.value);
+    if (Number.isNaN(rate)) return;
+    const series = buildCustomProjectionSeries(rate);
+    modalChart.data.datasets[modalChart.data.datasets.length - 1].data = series;
+    modalChart.update();
+    updateProjResultText(rate, series);
+  });
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  currentModalIndicatorId = null;
+  editingInitiativeId = null;
+}
+document.getElementById('modalOverlay').addEventListener('click', e=>{
+  if (e.target.id === 'modalOverlay') closeModal();
+});
+
+// =========================================================================
+// Initiatives sub-table (inside the indicator modal)
+// =========================================================================
+function renderModalInitiativesIfOpen(){
+  if (currentModalIndicatorId && document.getElementById('modalOverlay').classList.contains('open')){
+    renderModalInitiatives(currentModalIndicatorId);
+  }
+}
+
+function initBadge(map, value){
+  const color = map[value] || '#9a9a9a';
+  return `<span class="badge" style="color:${color};border-color:${color}66;background:${color}18">${esc(value||'—')}</span>`;
+}
+
+function renderModalInitiatives(indicatorId){
+  const wrap = document.getElementById('modalInitSection');
+  if (!wrap) return;
+  const list = initiativesByIndicator[indicatorId] || [];
+  const canEdit = isAdmin && editMode;
+
+  const addBtnHtml = canEdit
+    ? `<button class="btn btn-secondary btn-sm" id="addInitiativeBtn">+ Add Initiative</button>`
+    : '';
+
+  let bodyHtml = '';
+  if (!list.length){
+    bodyHtml = `<div class="init-empty">No initiatives recorded for this indicator yet.${canEdit ? '' : ' Sign in as admin to add some.'}</div>`;
+  } else {
+    const rows = list.map((it, idx) => renderInitiativeRow(it, idx+1, canEdit)).join('');
+    bodyHtml = `<div class="init-table-wrap"><table class="init-table">
+      <thead><tr>
+        <th>No.</th><th>Initiative</th><th>Target Audience</th><th>Type</th><th>Timeline</th>
+        <th>Start</th><th>End</th><th>Department</th><th>Ministry</th><th>Status</th><th>Priority</th><th>Progress</th><th>Owner</th>
+        ${canEdit ? '<th></th>' : ''}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+  }
+
+  wrap.innerHTML = `
+    <div class="init-section-head">
+      <h4>Supporting Initiatives ${list.length ? `(${list.length})` : ''}</h4>
+      ${addBtnHtml}
+    </div>
+    ${bodyHtml}
+  `;
+
+  if (canEdit){
+    const addBtn = document.getElementById('addInitiativeBtn');
+    if (addBtn) addBtn.addEventListener('click', async () => {
+      addBtn.disabled = true;
+      try{
+        const newId = await createInitiative(indicatorId);
+        editingInitiativeId = newId; // open new row directly in edit mode
+        renderModalInitiatives(indicatorId); // force it now, in case the live listener already re-rendered without this flag
+      } catch(err){ alert('Could not add initiative: ' + err.message); }
+      addBtn.disabled = false;
+    });
+    wrap.querySelectorAll('[data-edit-init]').forEach(btn=>{
+      btn.addEventListener('click', () => { editingInitiativeId = btn.getAttribute('data-edit-init'); renderModalInitiatives(indicatorId); });
+    });
+    wrap.querySelectorAll('[data-cancel-init]').forEach(btn=>{
+      btn.addEventListener('click', () => { editingInitiativeId = null; renderModalInitiatives(indicatorId); });
+    });
+    wrap.querySelectorAll('[data-save-init]').forEach(btn=>{
+      btn.addEventListener('click', async () => {
+        const initId = btn.getAttribute('data-save-init');
+        const row = wrap.querySelector(`tr[data-row-id="${initId}"]`);
+        const patch = {
+          initiative: row.querySelector('[data-f="initiative"]').value.trim(),
+          target_audience: row.querySelector('[data-f="target_audience"]').value.trim(),
+          type: row.querySelector('[data-f="type"]').value,
+          timeline: row.querySelector('[data-f="timeline"]').value,
+          start_date: row.querySelector('[data-f="start_date"]').value,
+          end_date: row.querySelector('[data-f="end_date"]').value,
+          department: row.querySelector('[data-f="department"]').value.trim(),
+          ministry: row.querySelector('[data-f="ministry"]').value.trim(),
+          status: row.querySelector('[data-f="status"]').value,
+          priority: row.querySelector('[data-f="priority"]').value,
+          progress_pct: Number(row.querySelector('[data-f="progress_pct"]').value) || 0,
+          owner: row.querySelector('[data-f="owner"]').value.trim(),
+        };
+        try{
+          await saveInitiativePatch(initId, patch);
+          editingInitiativeId = null;
+        } catch(err){ alert('Save failed: ' + err.message); }
+        renderModalInitiatives(indicatorId);
+      });
+    });
+    wrap.querySelectorAll('[data-delete-init]').forEach(btn=>{
+      btn.addEventListener('click', async () => {
+        if (!confirm('Remove this initiative? This cannot be undone.')) return;
+        try{ await deleteInitiative(btn.getAttribute('data-delete-init')); } catch(err){ alert('Delete failed: ' + err.message); }
+      });
+    });
+  }
+}
+
+function renderInitiativeRow(it, no, canEdit){
+  const isEditing = canEdit && editingInitiativeId === it.id;
+  if (!isEditing){
+    const actions = canEdit ? `<td><div class="init-row-actions">
+        <button class="init-icon-btn" data-edit-init="${esc(it.id)}" title="Edit">✎</button>
+        <button class="init-icon-btn danger" data-delete-init="${esc(it.id)}" title="Delete">✕</button>
+      </div></td>` : '';
+    return `<tr data-row-id="${esc(it.id)}">
+      <td>${no}</td>
+      <td style="min-width:180px;">${esc(it.initiative)}</td>
+      <td>${esc(it.target_audience)}</td>
+      <td>${esc(it.type)}</td>
+      <td>${esc(it.timeline)}</td>
+      <td>${esc(it.start_date)}</td>
+      <td>${esc(it.end_date)}</td>
+      <td>${esc(it.department)}</td>
+      <td>${esc(it.ministry)}</td>
+      <td>${initBadge(INITIATIVE_STATUS_COLORS, it.status)}</td>
+      <td>${initBadge(INITIATIVE_PRIORITY_COLORS, it.priority)}</td>
+      <td>${it.progress_pct ?? 0}%</td>
+      <td>${esc(it.owner)}</td>
+      ${actions}
+    </tr>`;
+  }
+
+  const opts = (arr, current) => arr.map(o => `<option value="${esc(o)}" ${o===current?'selected':''}>${esc(o)}</option>`).join('');
+  return `<tr data-row-id="${esc(it.id)}">
+    <td>${no}</td>
+    <td><input class="init-cell-input" data-f="initiative" value="${esc(it.initiative)}" style="min-width:160px;"></td>
+    <td><input class="init-cell-input" data-f="target_audience" value="${esc(it.target_audience)}"></td>
+    <td><select class="init-cell-select" data-f="type">${opts(INITIATIVE_TYPES, it.type)}</select></td>
+    <td><select class="init-cell-select" data-f="timeline">${opts(TIMELINE_CLASSES, it.timeline)}</select></td>
+    <td><input class="init-cell-input" data-f="start_date" type="date" value="${esc(it.start_date)}"></td>
+    <td><input class="init-cell-input" data-f="end_date" type="date" value="${esc(it.end_date)}"></td>
+    <td><input class="init-cell-input" data-f="department" value="${esc(it.department)}"></td>
+    <td><input class="init-cell-input" data-f="ministry" value="${esc(it.ministry)}"></td>
+    <td><select class="init-cell-select" data-f="status">${opts(INITIATIVE_STATUS, it.status)}</select></td>
+    <td><select class="init-cell-select" data-f="priority">${opts(INITIATIVE_PRIORITY, it.priority)}</select></td>
+    <td><input class="init-cell-input" data-f="progress_pct" type="number" min="0" max="100" value="${it.progress_pct ?? 0}" style="width:56px;"></td>
+    <td><input class="init-cell-input" data-f="owner" value="${esc(it.owner)}"></td>
+    <td><div class="init-row-actions">
+      <button class="init-icon-btn success" data-save-init="${esc(it.id)}" title="Save">✓</button>
+      <button class="init-icon-btn" data-cancel-init="${esc(it.id)}" title="Cancel">✕</button>
+    </div></td>
+  </tr>`;
+}
+// =========================================================================
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active', p.id===`panel-${name}`));
+}
+document.getElementById('tabsNav').addEventListener('click', e=>{
+  const btn = e.target.closest('.tab-btn');
+  if (btn) switchTab(btn.dataset.tab);
+});
+
+// =========================================================================
+// CSV Export
+// =========================================================================
+function exportCSV(){
+  const headers = ['Aspirasi','AKPI','Indicator (BM)','Lead Agency','Metric Type', ...HISTORICAL_YEARS.map(String), 'Target (2035)','Direction','Status','Review Cycle','Source Note','Validation Note','Definisi (BM)','Definition (EN)'];
+  const rows = DERIVED.map(d=>[
+    d.aspirasi, d.akpi_code, d.indicator_bm, d.lead_agency||'', d.metric_type||'',
+    ...HISTORICAL_YEARS.map(y=> d.values[String(y)] ?? ''),
+    d.target_2035 ?? '', d.direction, d.status, d.review_cycle||'',
+    (d.source_note||'').replace(/\n/g,' '), d.validation_note||'',
+    d.definition_bm||'', d.definition_en||''
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(c => {
+    const s = String(c);
+    return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+  }).join(',')).join('\n');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `Manpower_AKPI_Dashboard_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+document.getElementById('exportBtn').addEventListener('click', exportCSV);
+
+// =========================================================================
+// Render all (used on init and after every Firebase data update)
+// =========================================================================
+function renderAll(){
+  populateFilterOptions();
+  renderSummary();
+  renderCharts();
+  renderAspirasiCards();
+  renderProgressList();
+  renderIndicators();
+  renderProjection();
+  renderDataTable();
+  renderDefinitions();
+}
+
+// ===== Init =====
+renderAll();
+initFirebase();
+</script>
+</body>
+</html>
