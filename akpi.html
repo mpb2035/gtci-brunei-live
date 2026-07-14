@@ -681,19 +681,23 @@ function setSyncPill(state, label){
 }
 
 function initFirebase(){
+  const gateBtn = document.getElementById('gateEmailBtn');
   if (!FIREBASE_CONFIGURED){
     setSyncPill('', '● Static preview · add Firebase config to enable live sync');
+    showGateError('Firebase isn\'t configured on this page yet.');
     return;
   }
   try{
     fbApp = firebase.initializeApp(FIREBASE_CONFIG);
     fbAuth = firebase.auth();
     fbDb = firebase.database();
-    setSyncPill('', '● Not signed in · static preview');
+    setSyncPill('', '● Not signed in');
+    if (gateBtn) gateBtn.disabled = false;
     fbAuth.onAuthStateChanged(onAuthChanged);
   } catch(err){
     console.error('Firebase init failed', err);
     setSyncPill('error', '● Firebase config error');
+    showGateError('Could not connect to Firebase: ' + err.message);
   }
 }
 
