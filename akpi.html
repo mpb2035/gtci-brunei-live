@@ -688,7 +688,8 @@ function initFirebase(){
     return;
   }
   try{
-    fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+    fbApp = firebase.apps.length ? firebase.app () :
+    firebase.initializeApp(FIREBASE_CONFIG);
     fbAuth = firebase.auth();
     fbDb = firebase.database();
     setSyncPill('', '● Not signed in');
