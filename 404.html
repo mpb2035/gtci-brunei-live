@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<script>
+  // GitHub Pages serves this file for any path it doesn't recognize as a
+  // real file — which includes clean SPA routes like /akpi or /gtci, since
+  // GH Pages is static hosting with no server-side rewrites. We stash the
+  // path the user actually asked for, then redirect to the app's own
+  // index.html (via a relative "./", so this works no matter how deep the
+  // site is hosted — user page at the domain root or project page under
+  // /repo-name/). index.html restores the path on load and the router
+  // takes it from there.
+  sessionStorage.setItem('spa-redirect', location.pathname + location.search + location.hash);
+</script>
+<meta http-equiv="refresh" content="0; url=./">
+</head>
+<body>Redirecting…</body>
+</html>
