@@ -312,7 +312,16 @@ body{
   opacity:.55;transition:opacity .15s,background .15s;line-height:1;}
 #view-gtci .screenshot-btn:hover{opacity:1;background:var(--bg-tertiary,#f1f5f9);}
 #view-gtci .screenshot-btn[disabled]{opacity:.3;cursor:wait;}
-#view-gtci .detail-panel{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+#view-gtci .detail-panel{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px;position:relative;}
+#view-gtci .pencil-badge{position:absolute;top:10px;right:12px;width:30px;height:30px;border-radius:50%;
+  background:#fff;border:1.5px solid var(--border-color);display:flex;align-items:center;justify-content:center;
+  font-size:13.5px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:all .15s;z-index:5;color:#64748b;}
+#view-gtci .pencil-badge:hover{border-color:#d97706;color:#d97706;background:#fffbeb;transform:scale(1.07);}
+#view-gtci body.edit-mode .pencil-badge{background:#d97706;border-color:#d97706;color:#fff;
+  box-shadow:0 0 0 4px #d9770626,0 1px 3px rgba(0,0,0,.12);}
+#view-gtci body.edit-mode .pencil-badge:hover{background:#b45309;border-color:#b45309;color:#fff;transform:scale(1.07);}
+#view-gtci body.edit-mode .pencil-badge::after{content:'';position:absolute;top:-3px;right:-3px;width:9px;height:9px;
+  border-radius:50%;background:#16a34a;border:1.5px solid #fff;}
 #view-gtci .d-sec{}
 #view-gtci .d-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
 #view-gtci .d-txt{font-size:12.5px;color:var(--text-primary);line-height:1.65;}
@@ -2099,6 +2108,26 @@ function renderIndicatorCard(cid, orientation){
 /* ============================================================
    EDIT MODE — toggle, download, discard
    ============================================================ */
+// Clicking anywhere that isn't an editable field/control while Edit Mode is on exits Edit Mode
+// automatically. Any field mid-edit has already committed its change on blur (which fires before
+// this click handler runs), so nothing is lost — this just closes out the editing session.
+document.addEventListener('click', function(e){
+  if(!editMode) return;
+  const target = e.target;
+  const isEditControl = target.closest([
+    '[data-editable="1"]',      // contenteditable text/number fields
+    '.pencil-badge',            // the badge itself (has its own handler)
+    'select', 'option',         // ministry / secondary-ministry dropdowns
+    'input[type="checkbox"]',   // quick-win / cross-cutting flags
+    '.copy-btn',                // copy buttons inside edit mode
+    '#edit-mode-btn',           // main toolbar edit toggle
+    '#master-json-btn', '#manage-ministries-btn', '.ministry-sidebar', '#ministry-sidebar',
+    '.screenshot-btn'
+  ].join(',')) : null;
+  if(isEditControl) return;
+  toggleEditMode();
+}, true);
+
 function toggleEditMode(){
   editMode = !editMode;
   document.body.classList.toggle('edit-mode', editMode);
@@ -3375,7 +3404,9 @@ function buildDetailPanel(i){
     return m ? `<span class="min-pill" style="background:${m.color}1c;color:${m.color};margin-right:4px;">${esc(m.short||id)}</span>` : esc(id);
   }).join('');
 
-  let html = `<div class="detail-panel">`;
+  let html = `<div class="detail-panel">
+    <button type="button" class="pencil-badge" title="${editMode?'Editing on — click to stop and save':'Click to edit this scorecard'}"
+      onclick="event.stopPropagation();toggleEditMode();">${editMode?'✓':'✎'}</button>`;
 
   if(i.definition){
     html += `<div class="d-box"><div class="d-lbl" style="color:#475569;">Indicator Definition
